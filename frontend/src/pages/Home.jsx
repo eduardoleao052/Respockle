@@ -7,26 +7,54 @@ export default function Home() {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [User, setUser] = useState(null);;
+  const [NotesLikedByUsers, setNotesLikedByUsers] = useState(null);;
 
-  useEffect(() => {getNotes(); getUsers();},[])
+  useEffect(() => {
+    getNotes();
+    getUsers();
+    getLikesByUser();
+  },[])
+
+  function getFields(input, field) {
+    if (!input) return
+    var output = [];
+    for (var i=0; i < input.length ; ++i)
+        output.push(input[i][field]);
+    return output;
+}
 
   const getNotes = () => {
     api
     .get("/api/notes/")
     .then((res) => res.data)
-    .then((data) => {console.log(data);setNotes(data)})
+    .then((data) => {console.log(data); setNotes(data)})
     .catch((error) => alert(error))
   }
   const getUsers = () => {
     api
-    .get("/api/notes/")
+    .get("/api/notes/user/")
     .then((res) => res.data)
-    .then((data) => {console.log(data);setNotes(data)})
+    .then((data) => {console.log(data); setUser(data)})
+    .catch((error) => alert(error))
+  }
+
+  const getLikesByUser = () => {
+    api
+    .get(`/api/notes/notes_liked_by_user/`)
+    .then((res) => res.data)
+    .then((data) => {
+      console.log("POSTS LIKED BY THIS USER:");
+      console.log(data);
+      console.log(NotesLikedByUsers)
+      if (data !== NotesLikedByUsers) {
+        setNotesLikedByUsers(data)
+      }
+    }) 
     .catch((error) => alert(error))
   }
 
   const deleteNote = (id) => {
-    console.log(id)
     api.delete(`/api/notes/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
         console.log("Note deleted!")
@@ -59,7 +87,8 @@ export default function Home() {
     api.post(`/api/notes/like/${el.id}/`).then((res) => {
       if (res.status === 201 || res.status === 200) {
         console.log("Note liked!")
-        getNotes()
+        getNotes();
+        getLikesByUser();
       } else {
         alert("Failed to like note!")
       }
@@ -85,15 +114,19 @@ export default function Home() {
     <div>
       <div>
         <h2>Notes</h2>
+        <p>{User ? User.username : null}</p>
         {notes.map((el,id) => 
         <div className="note-div" key={id}>
           <p><b>{el.title}</b></p>
           <p>{el.content}</p>
+          <p>{el.author_username}</p>
           <p>{el.likes}</p>
           <button onClick={() => deleteNote(el.id)}>Delete</button>
           <button onClick={() => handleMoveUp(id)}>Up</button>
           <button onClick={() => handleMoveDown(id)}>Down</button>
-          <button onClick={() => handleLike(el)}>Like</button>
+          <button
+              style={{backgroundColor: getFields(NotesLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
+              onClick={() => handleLike(el)}>Like</button>
         </div>)}
       </div>
       <h2>Create Note</h2>
