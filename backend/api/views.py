@@ -1,18 +1,18 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, NoteSerializer
+from .serializers import UserSerializer, PostSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note
+from .models import Post
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 # Create your views here.
 @api_view(['GET'])
-def notes_list(request):
-    notes = Note.objects.all()
-    serializer = NoteSerializer(notes, many=True)
+def posts_list(request):
+    posts = Post.objects.all()
+    serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
 # Create your views here.
@@ -24,24 +24,24 @@ def current_user(request):
 
 # Create your views here.
 @api_view(['POST'])
-def note_create(request):
+def post_create(request):
     data=request.data
     data["author_username"] = request.user.username
-    serializer = NoteSerializer(data=data)
+    serializer = PostSerializer(data=data)
     if serializer.is_valid():
         serializer.save(author=request.user)
     return Response(serializer.data)
 
 @api_view(['GET'])
-def note_detail(request, pk):
-	note = Note.objects.get(id=pk)
-	serializer = NoteSerializer(note, many=False)
+def post_detail(request, pk):
+	post = Post.objects.get(id=pk)
+	serializer = PostSerializer(post, many=False)
 	return Response(serializer.data)
 
 @api_view(['POST'])
-def note_update(request, pk):
-	task = Note.objects.get(id=pk)
-	serializer = NoteSerializer(instance=task, data=request.data)
+def post_update(request, pk):
+	task = Post.objects.get(id=pk)
+	serializer = PostSerializer(instance=task, data=request.data)
 
 	if serializer.is_valid():
 		serializer.save()
@@ -50,35 +50,35 @@ def note_update(request, pk):
 
 
 @api_view(['DELETE'])
-def note_delete(request, pk):
-	task = Note.objects.get(id=pk)
+def post_delete(request, pk):
+	task = Post.objects.get(id=pk)
 	task.delete()
 
 	return Response('Item succsesfully deleted!')
 
 # Create your views here.
 @api_view(['POST'])
-def note_like(request, pk):
-    note = Note.objects.get(id=pk)
+def post_like(request, pk):
+    post = Post.objects.get(id=pk)
     user = User.objects.get(id = request.user.id)
-    if user.liked_notes.contains(note):
-        note.likes -= 1
-        user.liked_notes.remove(note)
+    if user.liked_posts.contains(post):
+        post.likes -= 1
+        user.liked_posts.remove(post)
     else:
-        note.likes += 1
-        user.liked_notes.add(note)
+        post.likes += 1
+        user.liked_posts.add(post)
     print("AAAAAAA",user)
-    serializer = NoteSerializer(instance=note, data={'content': note.content, 'title': note.title})
+    serializer = PostSerializer(instance=post, data={'content': post.content, 'title': post.title})
     print(serializer.is_valid())
     if serializer.is_valid():
-        serializer.save(author=note.author)
+        serializer.save(author=post.author)
     return Response(serializer.data)
 
 # Create your views here.
 @api_view(['GET'])
-def notes_liked_by_user(request):
-    notes = Note.objects.filter(liked_by_user = request.user.id)
-    serializer = NoteSerializer(notes, many=True)
+def posts_liked_by_user(request):
+    posts = Post.objects.filter(liked_by_user = request.user.id)
+    serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
 
@@ -90,12 +90,12 @@ def notes_liked_by_user(request):
 
 
 # DEPRECATED:
-class CreateNoteView(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
+class CreatePostView(generics.ListCreateAPIView):
+    serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        queryset = Note.objects.all()
+        queryset = Post.objects.all()
         return queryset
     
     def perform_create(self, serializer):
@@ -104,13 +104,13 @@ class CreateNoteView(generics.ListCreateAPIView):
         else:
             print(serializer.errors)
 
-class DeleteNoteView(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
+class DeletePostView(generics.DestroyAPIView):
+    serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Note.objects.filter(author = user)
+        queryset = Post.objects.filter(author = user)
         return queryset
 
 

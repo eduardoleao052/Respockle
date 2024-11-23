@@ -4,108 +4,99 @@ import api from "../api"
 import "../styles/Home.css"
 
 export default function Home() {
-  const [notes, setNotes] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [User, setUser] = useState(null);;
-  const [NotesLikedByUsers, setNotesLikedByUsers] = useState(null);;
+  const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
 
   useEffect(() => {
-    getNotes();
+    getPosts();
     getUsers();
     getLikesByUser();
   },[])
 
   function getFields(input, field) {
-    if (!input) return
+    if (!input) return []
     var output = [];
     for (var i=0; i < input.length ; ++i)
         output.push(input[i][field]);
     return output;
 }
 
-  const getNotes = () => {
+  const getPosts = () => {
     api
-    .get("/api/notes/")
+    .get("/api/posts/")
     .then((res) => res.data)
-    .then((data) => {console.log(data); setNotes(data)})
+    .then((data) => {setPosts(data)})
     .catch((error) => alert(error))
   }
+
   const getUsers = () => {
     api
-    .get("/api/notes/user/")
+    .get("/api/posts/user/")
     .then((res) => res.data)
-    .then((data) => {console.log(data); setUser(data)})
+    .then((data) => {setUser(data)})
     .catch((error) => alert(error))
   }
 
   const getLikesByUser = () => {
     api
-    .get(`/api/notes/notes_liked_by_user/`)
+    .get(`/api/posts/posts_liked_by_user/`)
     .then((res) => res.data)
     .then((data) => {
-      console.log("POSTS LIKED BY THIS USER:");
-      console.log(data);
-      console.log(NotesLikedByUsers)
-      if (data !== NotesLikedByUsers) {
-        setNotesLikedByUsers(data)
+      if (data !== PostsLikedByUsers) {
+        setPostsLikedByUsers(data)
       }
     }) 
     .catch((error) => alert(error))
   }
 
-  const deleteNote = (id) => {
-    api.delete(`/api/notes/delete/${id}/`).then((res) => {
+  const deletePost = (id) => {
+    api.delete(`/api/posts/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
-        console.log("Note deleted!")
-        //setNotes(n => [...n, {content,title}])
-        getNotes()
+        getPosts()
       }
-      else alert("Failed to delete note!")
+      else alert("Failed to delete post!")
     }).catch((error) => alert(error))
   }
 
   const handleMoveUp = (id) => {
-    console.log(id !== 0)
     if (id !== 0) {
-      const newNotes = [...notes];
-      [newNotes[id],newNotes[id - 1]] = [newNotes[id -1],newNotes[id]];
-      setNotes(newNotes);
+      const newPosts = [...posts];
+      [newPosts[id],newPosts[id - 1]] = [newPosts[id -1],newPosts[id]];
+      setPosts(newPosts);
     }
   }
 
   const handleMoveDown = (id) => {
-    console.log(id !== notes.length - 1)
-    if (id !== notes.length - 1) {
-      const newNotes = [...notes];
-      [newNotes[id],newNotes[id + 1]] = [newNotes[id + 1],newNotes[id]];
-      setNotes(newNotes);
+    if (id !== posts.length - 1) {
+      const newPosts = [...posts];
+      [newPosts[id],newPosts[id + 1]] = [newPosts[id + 1],newPosts[id]];
+      setPosts(newPosts);
     }
   }
 
   const handleLike = (el) => {
-    api.post(`/api/notes/like/${el.id}/`).then((res) => {
+    api.post(`/api/posts/like/${el.id}/`).then((res) => {
       if (res.status === 201 || res.status === 200) {
-        console.log("Note liked!")
-        getNotes();
+        getPosts();
         getLikesByUser();
       } else {
-        alert("Failed to like note!")
+        alert("Failed to like post!")
       }
     }).catch((error) => alert(error))
   }
 
-  const createNote = (e) => {
+  const createPost = (e) => {
     e.preventDefault()
-    api.post(`/api/notes/create/`, {content,title}).then((res) => {
+    api.post(`/api/posts/create/`, {content,title}).then((res) => {
       if (res.status === 201 || res.status === 200) {
-        console.log("Note created!")
-        getNotes()
+        getPosts()
       } else {
-        alert("Failed to create note!")
+        alert("Failed to create post!")
       }
     }).catch((error) => alert(error))
-    console.log(notes)
     setTitle('');
     setContent('');
   }
@@ -113,24 +104,24 @@ export default function Home() {
   return (
     <div>
       <div>
-        <h2>Notes</h2>
+        <h2>Posts</h2>
         <p>{User ? User.username : null}</p>
-        {notes.map((el,id) => 
-        <div className="note-div" key={id}>
+        {posts.map((el,id) => 
+        <div className="post-div" key={id}>
           <p><b>{el.title}</b></p>
           <p>{el.content}</p>
           <p>{el.author_username}</p>
           <p>{el.likes}</p>
-          <button onClick={() => deleteNote(el.id)}>Delete</button>
+          <button onClick={() => deletePost(el.id)}>Delete</button>
           <button onClick={() => handleMoveUp(id)}>Up</button>
           <button onClick={() => handleMoveDown(id)}>Down</button>
           <button
-              style={{backgroundColor: getFields(NotesLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
+              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
               onClick={() => handleLike(el)}>Like</button>
         </div>)}
       </div>
-      <h2>Create Note</h2>
-      <form onSubmit={createNote}>
+      <h2>Create Post</h2>
+      <form onSubmit={createPost}>
         <label htmlFor="title">Title</label>
         <br />
         <input type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>

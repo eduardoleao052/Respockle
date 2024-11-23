@@ -2,12 +2,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('notes/', views.notes_list, name="note-list"),
-    path('notes/detail/', views.note_detail, name="note-detail"),
-    path('notes/like/<int:pk>/', views.note_like, name="note-like"),
-    path('notes/create/', views.note_create, name="note-create"),
-    path('notes/delete/<int:pk>/', views.note_delete, name="note-delete"),
-    path('notes/update/', views.note_update, name="note-update"),
-    path('notes/user/', views.current_user, name="current-user"),
-    path('notes/notes_liked_by_user/', views.notes_liked_by_user, name="notes-liked-by-user")
+    path('posts/', views.posts_list, name="post-list"),
+    path('posts/detail/', views.post_detail, name="post-detail"),
+    path('posts/like/<int:pk>/', views.post_like, name="post-like"),
+    path('posts/create/', views.post_create, name="post-create"),
+    path('posts/delete/<int:pk>/', views.post_delete, name="post-delete"),
+    path('posts/update/', views.post_update, name="post-update"),
+    path('posts/user/', views.current_user, name="current-user"),
+    path('posts/posts_liked_by_user/', views.posts_liked_by_user, name="posts-liked-by-user")
 ]
