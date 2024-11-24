@@ -2,24 +2,22 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
   const [User, setUser] = useState(null);;
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
   const [communities, setCommunities] = useState(null);
   const communityId = Number(window.location.href.split("/").pop());
-  const location = useLocation();
+  const navigateTo = useNavigate()
 
   useEffect(() => {
     getUsers();
     getLikesByUser();
     getCommunities();
     getCommunityPosts();
-  },[location])
+  },[])
 
   function getFields(input, field) {
     if (!input) return []
@@ -33,7 +31,7 @@ export default function Home() {
     api
     .get(`/api/community/${communityId}/`)
     .then((res) => res.data)
-    .then((data) => {setPosts(data);console.log(data)})
+    .then((data) => {setPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -91,9 +89,9 @@ export default function Home() {
       <p>{User ? User.username : null}</p>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
-          <a key={id} href={`/detail/${el.id}`}>
-          <p><b>Title: {el.title}</b></p>
-          </a>
+          <button key={id} onClick={() => navigateTo(`/detail/${el.id}`)}>
+            Title: {el.title}
+          </button>
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
