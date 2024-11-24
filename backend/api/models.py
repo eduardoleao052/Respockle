@@ -2,7 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Community(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
 
+    def __str__(self):
+        return self.name
+    
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -11,6 +17,7 @@ class Post(models.Model):
     author_username = models.TextField(default='')
     likes = models.IntegerField(default=0)
     liked_by_user = models.ManyToManyField(User, related_name="liked_posts")
+    community = models.ForeignKey(Community, related_name="posts_in_community", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

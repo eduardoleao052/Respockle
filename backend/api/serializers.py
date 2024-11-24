@@ -5,7 +5,7 @@ em JSON que pode ser consumido pelo frontend por meio de chamadas de API.
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Post
+from .models import Post, Community
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,5 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ["id", "title", "content", "created_at", "author", "author_username", "likes"]
+        fields = ["id", "title", "content", "created_at", "author", "author_username", "likes", "community"]
         extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}}
+
+class CommunitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Community
+        fields = ["id", "name", "description"]

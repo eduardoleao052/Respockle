@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
 import "./styles/index.css"
+import CreatePost from "./pages/CreatePost"
 
 function Logout() {
   localStorage.clear()
@@ -28,6 +29,7 @@ function App() {
           <Sidebar />
           <Routes>
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
+            <Route path="/create_post" element={<ProtectedRoute><CreatePost /></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />

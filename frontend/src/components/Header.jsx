@@ -8,8 +8,7 @@ export default function Header() {
 
     setInterval(() => {
         setToken(localStorage.getItem(ACCESS_TOKEN));
-        console.log(token)
-    },100);
+    },10);
 
     const getUser = () => {
         api
@@ -27,10 +26,17 @@ export default function Header() {
         <nav className='header-navbar'>
             {
                 token ? 
-                <a href="/logout" onClick={() => isLoggedIn()}>Logout</a> 
+                <>
+                    <a href="/logout" onClick={() => isLoggedIn()}>Logout</a>
+                    <br />
+                    <a href="/create_post">Create Post</a>  
+                    <br />
+                    <a href="/">Home</a>  
+                </>
                 : 
                 <>
                     <a href="/login" onClick={() => isLoggedIn()}>Login</a> 
+                    <br />
                     <a href="/register"  onClick={() => isLoggedIn()}>Register</a>
                 </>
             }

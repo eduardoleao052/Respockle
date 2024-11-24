@@ -9,13 +9,11 @@ export default function Home() {
   const [content, setContent] = useState('');
   const [User, setUser] = useState(null);;
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
-  const [communities, setCommunities] = useState(null);
 
   useEffect(() => {
     getPosts();
     getUsers();
     getLikesByUser();
-    getCommunities();
   },[])
 
   function getFields(input, field) {
@@ -42,14 +40,6 @@ export default function Home() {
     .catch((error) => alert(error))
   }
 
-  const getCommunities = () => {
-    api
-    .get("/api/communities/")
-    .then((res) => res.data)
-    .then((data) => {setCommunities(data)})
-    .catch((error) => alert(error))
-  }
-
   const getLikesByUser = () => {
     api
     .get(`/api/posts/posts_liked_by_user/`)
@@ -69,6 +59,22 @@ export default function Home() {
       }
       else alert("Failed to delete post!")
     }).catch((error) => alert(error))
+  }
+
+  const handleMoveUp = (id) => {
+    if (id !== 0) {
+      const newPosts = [...posts];
+      [newPosts[id],newPosts[id - 1]] = [newPosts[id -1],newPosts[id]];
+      setPosts(newPosts);
+    }
+  }
+
+  const handleMoveDown = (id) => {
+    if (id !== posts.length - 1) {
+      const newPosts = [...posts];
+      [newPosts[id],newPosts[id + 1]] = [newPosts[id + 1],newPosts[id]];
+      setPosts(newPosts);
+    }
   }
 
   const handleLike = (el) => {
@@ -97,22 +103,35 @@ export default function Home() {
 
   return (
     <div>
-      <h2>Posts</h2>
-      <p>{User ? User.username : null}</p>
-      {posts.map((el,id) => 
-      <div className="post-div" key={id}>
-        <p><b>Title: {el.title}</b></p>
-        <p>Content: {el.content}</p>
-        <p>Author: {el.author_username}</p>
-        <p>Likes: {el.likes}</p>
-        <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
-        <button onClick={() => deletePost(el.id)}>Delete</button>
-        <button
-            style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
-            onClick={() => handleLike(el)}>
-            Like
-          </button>
-      </div>)}
+      <div>
+        <h2>Posts</h2>
+        <p>{User ? User.username : null}</p>
+        {posts.map((el,id) => 
+        <div className="post-div" key={id}>
+          <p><b>{el.title}</b></p>
+          <p>{el.content}</p>
+          <p>{el.author_username}</p>
+          <p>{el.likes}</p>
+          <button onClick={() => deletePost(el.id)}>Delete</button>
+          <button onClick={() => handleMoveUp(id)}>Up</button>
+          <button onClick={() => handleMoveDown(id)}>Down</button>
+          <button
+              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
+              onClick={() => handleLike(el)}>Like</button>
+        </div>)}
+      </div>
+      <h2>Create Post</h2>
+      <form onSubmit={createPost}>
+        <label htmlFor="title">Title</label>
+        <br />
+        <input type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>
+        <br />
+        <label htmlFor="content">Content</label>
+        <br />
+        <textarea id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
+        <br />
+        <input type="submit" value="Submit" />
+      </form>
     </div>
   )
 }

@@ -1,28 +1,27 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, PostSerializer
+from .serializers import UserSerializer, PostSerializer, CommunitySerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Post
+from .models import Post, Community
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-# Create your views here.
+# <-------- POSTS --------->
+
 @api_view(['GET'])
 def posts_list(request):
     posts = Post.objects.all()
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-# Create your views here.
 @api_view(['GET'])
 def current_user(request):
     users = User.objects.filter(id = request.user.id)
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
-# Create your views here.
 @api_view(['POST'])
 def post_create(request):
     data=request.data
@@ -56,7 +55,6 @@ def post_delete(request, pk):
 
 	return Response('Item succsesfully deleted!')
 
-# Create your views here.
 @api_view(['POST'])
 def post_like(request, pk):
     post = Post.objects.get(id=pk)
@@ -67,14 +65,11 @@ def post_like(request, pk):
     else:
         post.likes += 1
         user.liked_posts.add(post)
-    print("AAAAAAA",user)
-    serializer = PostSerializer(instance=post, data={'content': post.content, 'title': post.title})
-    print(serializer.is_valid())
+    serializer = PostSerializer(instance=post, data={'content': post.content, 'title': post.title, 'community': post.community.id})
     if serializer.is_valid():
         serializer.save(author=post.author)
     return Response(serializer.data)
 
-# Create your views here.
 @api_view(['GET'])
 def posts_liked_by_user(request):
     posts = Post.objects.filter(liked_by_user = request.user.id)
@@ -82,36 +77,13 @@ def posts_liked_by_user(request):
     return Response(serializer.data)
 
 
+# <--------- COMMUNITIES --------->
 
-
-
-
-
-
-
-# DEPRECATED:
-class CreatePostView(generics.ListCreateAPIView):
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        queryset = Post.objects.all()
-        return queryset
-    
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-
-class DeletePostView(generics.DestroyAPIView):
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Post.objects.filter(author = user)
-        return queryset
+@api_view(['GET'])
+def communities_list(request):
+    communities = Community.objects.all()
+    serializer = CommunitySerializer(communities, many=True)
+    return Response(serializer.data)
 
 
 class CreateUserView(generics.CreateAPIView):

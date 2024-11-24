@@ -9,5 +9,6 @@ urlpatterns = [
     path('posts/delete/<int:pk>/', views.post_delete, name="post-delete"),
     path('posts/update/', views.post_update, name="post-update"),
     path('posts/user/', views.current_user, name="current-user"),
-    path('posts/posts_liked_by_user/', views.posts_liked_by_user, name="posts-liked-by-user")
+    path('posts/posts_liked_by_user/', views.posts_liked_by_user, name="posts-liked-by-user"),
+    path('communities/', views.communities_list, name="communities-list"),
 ]
