@@ -8,6 +8,9 @@ import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
 import "./styles/index.css"
 import CreatePost from "./pages/CreatePost"
+import DetailPost from "./pages/DetailPost"
+import Community from "./pages/Community"
+import { useState } from "react"
 
 function Logout() {
   localStorage.clear()
@@ -28,9 +31,11 @@ function App() {
         <div className="app">
           <Sidebar />
           <Routes>
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
+            <Route path="/" element={<Home />}/>
             <Route path="/create_post" element={<ProtectedRoute><CreatePost /></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
+            <Route path='/detail/:id' element={<DetailPost />} />
+            <Route path='/community/:id' element={<Community />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />
             <Route path="*" element={<NotFound />}/>

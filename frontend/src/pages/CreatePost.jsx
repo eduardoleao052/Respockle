@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
+import { useNavigate } from 'react-router-dom';
 
 export default function CreatePost() {
   const [title, setTitle] = useState('');
@@ -9,7 +10,7 @@ export default function CreatePost() {
   const [community, setCommunity] = useState('')
   const [User, setUser] = useState(null);
   const [communities, setCommunities] = useState([]);
-
+  const navigateTo = useNavigate()
 
   useEffect(() => {
     getUsers();
@@ -57,6 +58,7 @@ export default function CreatePost() {
     setContent('');
     setCommunity(null);
     document.getElementById("community").value = "";
+    navigateTo(`/community/${community}`)
   }
 
   return (

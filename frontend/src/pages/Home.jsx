@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
+import { useLocation } from 'react-router-dom';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -10,13 +11,14 @@ export default function Home() {
   const [User, setUser] = useState(null);;
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
   const [communities, setCommunities] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     getPosts();
     getUsers();
     getLikesByUser();
     getCommunities();
-  },[])
+  },[location])
 
   function getFields(input, field) {
     if (!input) return []
@@ -82,37 +84,29 @@ export default function Home() {
     }).catch((error) => alert(error))
   }
 
-  const createPost = (e) => {
-    e.preventDefault()
-    api.post(`/api/posts/create/`, {content,title}).then((res) => {
-      if (res.status === 201 || res.status === 200) {
-        getPosts()
-      } else {
-        alert("Failed to create post!")
-      }
-    }).catch((error) => alert(error))
-    setTitle('');
-    setContent('');
-  }
-
   return (
     <div>
       <h2>Posts</h2>
       <p>{User ? User.username : null}</p>
       {posts.map((el,id) => 
-      <div className="post-div" key={id}>
-        <p><b>Title: {el.title}</b></p>
-        <p>Content: {el.content}</p>
-        <p>Author: {el.author_username}</p>
-        <p>Likes: {el.likes}</p>
-        <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
-        <button onClick={() => deletePost(el.id)}>Delete</button>
-        <button
-            style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
-            onClick={() => handleLike(el)}>
-            Like
-          </button>
-      </div>)}
+        <div className="post-div" key={id}>
+          <a key={id} href={`/detail/${el.id}`}>
+          <p><b>Title: {el.title}</b></p>
+          </a>
+          <p>Content: {el.content}</p>
+          <p>Author: {el.author_username}</p>
+          <p>Likes: {el.likes}</p>
+          <a href={`/community/${el.community}`}>
+          <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
+          </a>
+          <button onClick={() => deletePost(el.id)}>Delete</button>
+          <button
+              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
+              onClick={() => handleLike(el)}>
+              Like
+            </button>
+        </div>
+      )}
     </div>
   )
 }

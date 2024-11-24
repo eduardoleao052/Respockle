@@ -17,6 +17,13 @@ def posts_list(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def post_detail(request, pk):
+    post = Post.objects.get(pk=pk)
+    serializer = PostSerializer(post)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
 def current_user(request):
     users = User.objects.filter(id = request.user.id)
     serializer = UserSerializer(users, many=True)
@@ -76,7 +83,6 @@ def posts_liked_by_user(request):
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-
 # <--------- COMMUNITIES --------->
 
 @api_view(['GET'])
@@ -85,6 +91,11 @@ def communities_list(request):
     serializer = CommunitySerializer(communities, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def community(request, pk):
+    posts = Post.objects.filter(community=pk)
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
