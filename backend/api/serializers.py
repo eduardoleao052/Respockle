@@ -26,4 +26,4 @@ class PostSerializer(serializers.ModelSerializer):
 class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
-        fields = ["id", "name", "description"]
+        fields = ["id", "name", "description", "members"]

@@ -12,4 +12,7 @@ urlpatterns = [
     path('posts/posts_liked_by_user/', views.posts_liked_by_user, name="posts-liked-by-user"),
     path('communities/', views.communities_list, name="communities-list"),
     path('community/<int:pk>/', views.community, name="community"),
+    path('community/users_in_community/<int:pk>', views.users_in_community, name="users-in-community"),
+    path('community/handle_membership/<int:pk>/', views.handle_membership, name="handle-membership"),
+
 ]

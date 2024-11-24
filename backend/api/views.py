@@ -97,6 +97,29 @@ def community(request, pk):
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def users_in_community(request, pk):
+    users = User.objects.filter(communities = pk)
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def handle_membership(request, pk):
+    community = Community.objects.get(id=pk)
+    user = User.objects.get(id = request.user.id)
+    if user.communities.contains(community):
+        #community.members -= 1
+        user.communities.remove(community)
+    else:
+        #community.members += 1
+        user.communities.add(community)
+    serializer = CommunitySerializer(instance=community, data={'name': community.name, 'description': community.description})
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

@@ -7,7 +7,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 export default function Home() {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);;
-  const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
+  const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
+  const [usersInCommunity, setUsersInCommunity] = useState(null);
   const [communities, setCommunities] = useState(null);
   const communityId = Number(window.location.href.split("/").pop());
   const navigateTo = useNavigate()
@@ -17,6 +18,7 @@ export default function Home() {
     getLikesByUser();
     getCommunities();
     getCommunityPosts();
+    getUsersInCommunity();
   },[])
 
   function getFields(input, field) {
@@ -63,6 +65,18 @@ export default function Home() {
     .catch((error) => alert(error))
   }
 
+  const getUsersInCommunity = () => {
+    api
+    .get(`/api/community/users_in_community/${communityId}`)
+    .then((res) => res.data)
+    .then((data) => {
+      if (data !== usersInCommunity) {
+        setUsersInCommunity(data)
+      }
+    }) 
+    .catch((error) => alert(error))
+  }
+
   const deletePost = (id) => {
     api.delete(`/api/posts/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
@@ -83,9 +97,23 @@ export default function Home() {
     }).catch((error) => alert(error))
   }
 
+  const handle_membership = () => {
+    api.post(`/api/community/handle_membership/${communityId}/`).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        getUsersInCommunity();
+        getCommunityPosts();
+        console.log(usersInCommunity)
+
+      } else {
+        alert("Failed to like post!")
+      }
+    }).catch((error) => alert(error))
+  }
+
   return (
     <div>
-      <h2>Posts</h2>
+      <h2>{communities ? communities.filter((c) => c.id === communityId)[0].name : null}</h2>
+      <button onClick={() => handle_membership()}>{(User ? getFields(usersInCommunity, 'id').includes(User.id) : false) ? 'leave' : 'join'}</button> :
       <p>{User ? User.username : null}</p>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
