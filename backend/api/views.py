@@ -25,8 +25,8 @@ def post_detail(request, pk):
 
 @api_view(['GET'])
 def current_user(request):
-    users = User.objects.filter(id = request.user.id)
-    serializer = UserSerializer(users, many=True)
+    users = User.objects.get(id = request.user.id)
+    serializer = UserSerializer(users)
     return Response(serializer.data)
 
 @api_view(['POST'])

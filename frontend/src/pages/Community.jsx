@@ -102,7 +102,6 @@ export default function Home() {
       if (res.status === 201 || res.status === 200) {
         getUsersInCommunity();
         getCommunityPosts();
-        console.log(usersInCommunity)
 
       } else {
         alert("Failed to like post!")
@@ -113,8 +112,7 @@ export default function Home() {
   return (
     <div>
       <h2>{communities ? communities.filter((c) => c.id === communityId)[0].name : null}</h2>
-      <button onClick={() => handle_membership()}>{(User ? getFields(usersInCommunity, 'id').includes(User.id) : false) ? 'leave' : 'join'}</button> :
-      <p>{User ? User.username : null}</p>
+      <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`)}>
@@ -123,9 +121,9 @@ export default function Home() {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
-          <a href={`/community/${el.community}`}>
+          <button onClick={() => navigateTo(`/community/${el.community}`)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
-          </a>
+          </button>
           <button onClick={() => deletePost(el.id)}>Delete</button>
           <button
               style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 

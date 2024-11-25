@@ -86,7 +86,6 @@ export default function Home() {
   return (
     <div>
       <h2>Posts</h2>
-      <p>{User ? User.username : null}</p>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`)}>
@@ -95,9 +94,9 @@ export default function Home() {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
-          <a href={`/community/${el.community}`}>
+          <button onClick={() => navigateTo(`/community/${el.community}`)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
-          </a>
+          </button>
           <button onClick={() => deletePost(el.id)}>Delete</button>
           <button
               style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 

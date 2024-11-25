@@ -1,14 +1,18 @@
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'
 import "../styles/Form.css"
 
-export default function Form({ route, method }) {
+export default function Form({ route, method, url }) {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
+    const navigateTo = useNavigate()
+
+    useEffect(() => {
+        console.log(url)
+      },[])
 
     const name = method === "login" ? "Login" : "Register" 
 
@@ -20,9 +24,9 @@ export default function Form({ route, method }) {
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-                navigate("/")
+                navigateTo(url, { replace: true })
             } else if (method === "register") {
-                navigate("/login")
+                navigateTo("/login")
             }
         } catch(error) {
             alert(error);

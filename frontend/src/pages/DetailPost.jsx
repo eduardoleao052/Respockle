@@ -82,9 +82,9 @@ export default function DetailPost() {
         <p>Content: {post.content}</p>
         <p>Author: {post.author_username}</p>
         <p>Likes: {post.likes}</p>
-        <a href={`/community/${post.community}`}>
+        <button onClick={() => navigateTo(`/community/${el.community}`)}>
         <p>Community: {communities ? communities.filter((community) => community.id === post.community)[0].name : null}</p>
-        </a>        
+        </button>        
         <button onClick={() => deletePost(post.id)}>Delete</button>
         <button
             style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 

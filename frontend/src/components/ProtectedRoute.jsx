@@ -1,17 +1,18 @@
-import {Navigate} from  'react-router-dom'
+import {Navigate, useLocation} from  'react-router-dom'
 import {jwtDecode} from 'jwt-decode'
 import api from '../api';
 import { REFRESH_TOKEN, ACCESS_TOKEN } from '../constants'
 import { useEffect, useState } from 'react';
 
-
 export default function ProtectedRoute({ children }) {
 
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const location = useLocation();
 
     useEffect(() => {
         // Se houver qualquer erro, da Set em Authorized para false:
         auth().catch(() => setIsAuthorized(false))
+        console.log(location)
     }, [])
 
     const refreshToken = async () => {
@@ -49,6 +50,6 @@ export default function ProtectedRoute({ children }) {
         return <div>Loading...</div>
     }
 
-    return isAuthorized ? children : <Navigate to="/login"/>
+    return isAuthorized ? children : <Navigate to="/login" state={{ from: location }} />;
 
 }

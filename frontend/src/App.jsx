@@ -31,11 +31,11 @@ function App() {
         <div className="app">
           <Sidebar />
           <Routes>
-            <Route path="/" element={<Home />}/>
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
             <Route path="/create_post" element={<ProtectedRoute><CreatePost /></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
-            <Route path='/detail/:id' element={<DetailPost />} />
-            <Route path='/community/:id' element={<Community />} />
+            <Route path='/detail/:id' element={<ProtectedRoute><DetailPost /></ProtectedRoute>} />
+            <Route path='/community/:id' element={<ProtectedRoute><Community /></ProtectedRoute>} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />
             <Route path="*" element={<NotFound />}/>
