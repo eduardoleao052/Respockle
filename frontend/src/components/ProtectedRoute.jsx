@@ -12,7 +12,6 @@ export default function ProtectedRoute({ children }) {
     useEffect(() => {
         // Se houver qualquer erro, da Set em Authorized para false:
         auth().catch(() => setIsAuthorized(false))
-        console.log(location)
     }, [])
 
     const refreshToken = async () => {

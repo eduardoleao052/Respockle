@@ -17,14 +17,6 @@ export default function CreatePost() {
     getCommunities();
   },[])
 
-  function getFields(input, field) {
-    if (!input) return []
-    var output = [];
-    for (var i=0; i < input.length ; ++i)
-        output.push(input[i][field]);
-    return output;
-    }
-
   const getUsers = () => {
     api
     .get("/api/posts/user/")

@@ -2,7 +2,6 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
-import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
@@ -97,7 +96,7 @@ export default function Home() {
           <button onClick={() => navigateTo(`/community/${el.community}`)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
           </button>
-          <button onClick={() => deletePost(el.id)}>Delete</button>
+          {el.author === User?.id ? <button onClick={() => deletePost(el.id)}>Delete</button> : null}
           <button
               style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
               onClick={() => handleLike(el)}>

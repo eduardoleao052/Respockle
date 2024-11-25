@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, PostSerializer, CommunitySerializer
+from .serializers import UserSerializer, PostSerializer, CommunitySerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Post, Community
+from .models import Post, Community, Comment
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -14,6 +14,12 @@ from rest_framework.decorators import api_view
 def posts_list(request):
     posts = Post.objects.all()
     serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def post_comments(request, pk):
+    comments = Comment.objects.filter(post=pk).order_by('-created_at')
+    serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -34,6 +40,16 @@ def post_create(request):
     data=request.data
     data["author_username"] = request.user.username
     serializer = PostSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save(author=request.user)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def post_create_comment(request, pk):
+    data=request.data
+    data["author_username"] = request.user.username
+    data["post"] = pk
+    serializer = CommentSerializer(data=data)
     if serializer.is_valid():
         serializer.save(author=request.user)
     return Response(serializer.data)
@@ -77,10 +93,31 @@ def post_like(request, pk):
         serializer.save(author=post.author)
     return Response(serializer.data)
 
+@api_view(['POST'])
+def post_comment_like(request, pk):
+    comment = Comment.objects.get(id=pk)
+    user = User.objects.get(id = request.user.id)
+    if user.liked_comments.contains(comment):
+        comment.likes -= 1
+        user.liked_comments.remove(comment)
+    else:
+        comment.likes += 1
+        user.liked_comments.add(comment)
+    serializer = CommentSerializer(instance=comment, data={'content': comment.content, 'post': comment.post.id})
+    if serializer.is_valid():
+        serializer.save(author=comment.author)
+    return Response(serializer.data)
+
 @api_view(['GET'])
 def posts_liked_by_user(request):
     posts = Post.objects.filter(liked_by_user = request.user.id)
     serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def comments_liked_by_user(request, pk):
+    comments = Comment.objects.filter(liked_by_user = request.user.id, post=pk)
+    serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
 # <--------- COMMUNITIES --------->

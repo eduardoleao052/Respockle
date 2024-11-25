@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import Form from '../components/Form'
 import '../styles/Login.css'
 import {useLocation} from  'react-router-dom'
