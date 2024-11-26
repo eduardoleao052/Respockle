@@ -2,7 +2,7 @@ import {useState,useEffect} from 'react'
 import { useLocation } from 'react-router-dom';
 import api from "../api"
 
-export default function Sidebar() {
+export default function Sidebar({trigger}) {
 
   const [userCommunities, setUserCommunities] = useState([]);
   const [origin, setOrigin] = useState(null);
@@ -43,7 +43,7 @@ export default function Sidebar() {
   
   useEffect(() => {
     getUserCommunities();
-  },[])
+  },[trigger])
 
   useEffect(() => {
     getOrigin();

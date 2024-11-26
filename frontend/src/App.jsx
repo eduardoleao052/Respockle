@@ -24,7 +24,7 @@ function RegisterAndLogout() {
 }
 
 function App() {
-
+  const [trigger, setTrigger] = useState(false);
   return (
     <>
       <BrowserRouter>
@@ -36,7 +36,7 @@ function App() {
             <Route path="/create_post" element={<ProtectedRoute><><Sidebar /><CreatePost /></></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
             <Route path='/detail/:id' element={<ProtectedRoute><><Sidebar /><DetailPost /></></ProtectedRoute>} />
-            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar /><Community /></></ProtectedRoute>} />
+            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar trigger={trigger} /><Community setTrigger={setTrigger}/></></ProtectedRoute>} />
             <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><SavedPosts /></></ProtectedRoute>} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />

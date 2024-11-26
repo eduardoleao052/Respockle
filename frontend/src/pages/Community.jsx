@@ -4,7 +4,7 @@ import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Home() {
+export default function Community({setTrigger}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);;
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
@@ -103,7 +103,8 @@ export default function Home() {
       if (res.status === 201 || res.status === 200) {
         getUsersInCommunity();
         getCommunityPosts();
-        navigateTo(0)
+        //navigateTo(0)
+        setTrigger((t) => !t)
       } else {
         alert("Failed to like post!")
       }
@@ -122,7 +123,7 @@ export default function Home() {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
-          <button onClick={() => navigateTo(`/community/${el.community}`)}>
+          <button onClick={() => window.scrollTo(0, 0)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
           </button>
           {el.author === User?.id ? <button onClick={() => deletePost(el.id)}>Delete</button> : null}

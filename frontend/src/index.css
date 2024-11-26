@@ -1,0 +1,17 @@
+.header-navbar-authfalse {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 200px;
+    background-color: aqua;
+    margin: 0;
+}
+
+.header-navbar-authtrue {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 200px;
+    background-color: aqua;
+    margin: 0;
+}
