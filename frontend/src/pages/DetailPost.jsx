@@ -13,6 +13,7 @@ export default function DetailPost() {
   const [comments, setComments] = useState([])
   const [communities, setCommunities] = useState(null);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
+  const [PostsSavedByUsers, setPostsSavedByUsers] = useState(null);
   const [CommentsLikedByUsers, setCommentsLikedByUsers] = useState(null);
   const [commenting, setCommenting] = useState(false);
 
@@ -20,6 +21,7 @@ export default function DetailPost() {
     getPost();
     getCommunities();
     getPostsLikedByUser();
+    getPostsSavedByUser();
     getCommentsLikedByUser();
     getComments();
   },[])
@@ -33,6 +35,17 @@ export default function DetailPost() {
       if (data !== PostsLikedByUsers) {
         setPostsLikedByUsers(data)
       }
+    }) 
+    .catch((error) => alert(error))
+  }
+
+  const getPostsSavedByUser = () => {
+    api
+    .get(`/api/posts/posts_saved_by_user/`)
+    .then((res) => res.data)
+    .then((data) => {
+      console.log(data)
+      setPostsSavedByUsers(data)
     }) 
     .catch((error) => alert(error))
   }
@@ -58,8 +71,6 @@ export default function DetailPost() {
   }
 
   const getPost = () => {
-    console.log(idRoot)
-    console.log(idRoot.slice(0, idRoot.length - 1))
     api
     .get(`/api/posts/detail/${id}/`)
     .then((res) => res.data)
@@ -103,6 +114,18 @@ export default function DetailPost() {
     }).catch((error) => alert(error))
   }
 
+  const handleSave = (el) => {
+    api.post(`/api/posts/save/${el.id}/`).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        getPost();
+        getPostsSavedByUser();
+      } else {
+        alert("Failed to like post!")
+      }
+    }).catch((error) => alert(error))
+  }
+
+
   const handleCommentLike = (el) => {
     api.post(`/api/posts/comments/like/${el.id}/`).then((res) => {
       if (res.status === 201 || res.status === 200) {
@@ -123,7 +146,6 @@ export default function DetailPost() {
     if (content) {
       api.post(`/api/posts/comments/create/${id}/`, {content}).then((res) => {
         if (res.status === 201 || res.status === 200) {
-          console.log('commented')
           getComments()
         } else {
           alert("Failed to create post!")
@@ -150,6 +172,11 @@ export default function DetailPost() {
         <p>Community: {communities ? communities.filter((community) => community.id === post.community)[0].name : null}</p>
         </button>        
         <button onClick={() => deletePost()}>Delete</button>
+        <button 
+            style={{backgroundColor: getFields(PostsSavedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 
+            onClick={() => handleSave(post)}>
+            Save
+        </button>
         <button
             style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 
             onClick={() => handleLike(post)}>
@@ -171,7 +198,6 @@ export default function DetailPost() {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
-          {/* {el.author === User.id ? <button onClick={() => deleteComment(el.id)}>Delete</button> : null} */}
           <button
               style={{backgroundColor: getFields(CommentsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
               onClick={() => handleCommentLike(el)}>

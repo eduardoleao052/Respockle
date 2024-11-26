@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import { useState} from 'react'
 import api from "../api"
 import { ACCESS_TOKEN } from '../constants'
 
@@ -17,12 +17,12 @@ export default function Header() {
         .then((data) => {
             setUser(data);
         })
-        .catch((error) => console.log("User not logged in."))
+        .catch((error) => console.log(`User not logged in. Error message: ${error}`))
     }
 
   return (
     <>
-        <h1 className='header-title'>Respockle</h1>
+        <h1 className='header-title'>Dalilah the Crafty's Wonderful App for Diabeticals</h1>
         <nav className='header-navbar'>
             {
                 token ? 

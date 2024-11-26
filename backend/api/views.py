@@ -17,6 +17,12 @@ def posts_list(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def saved_posts(request):
+    posts = Post.objects.filter(saved_by_user = request.user.id)
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def post_comments(request, pk):
     comments = Comment.objects.filter(post=pk).order_by('-created_at')
     serializer = CommentSerializer(comments, many=True)
@@ -94,6 +100,19 @@ def post_like(request, pk):
     return Response(serializer.data)
 
 @api_view(['POST'])
+def post_save(request, pk):
+    post = Post.objects.get(id=pk)
+    user = User.objects.get(id = request.user.id)
+    if user.saved_posts.contains(post):
+        user.saved_posts.remove(post)
+    else:
+        user.saved_posts.add(post)
+    serializer = PostSerializer(instance=post, data={'content': post.content, 'title': post.title, 'community': post.community.id})
+    if serializer.is_valid():
+        serializer.save(author=post.author)
+    return Response(serializer.data)
+
+@api_view(['POST'])
 def post_comment_like(request, pk):
     comment = Comment.objects.get(id=pk)
     user = User.objects.get(id = request.user.id)
@@ -115,6 +134,12 @@ def posts_liked_by_user(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def posts_saved_by_user(request):
+    posts = Post.objects.filter(saved_by_user = request.user.id)
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def comments_liked_by_user(request, pk):
     comments = Comment.objects.filter(liked_by_user = request.user.id, post=pk)
     serializer = CommentSerializer(comments, many=True)
@@ -125,6 +150,12 @@ def comments_liked_by_user(request, pk):
 @api_view(['GET'])
 def communities_list(request):
     communities = Community.objects.all()
+    serializer = CommunitySerializer(communities, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def user_communities(request):
+    communities = Community.objects.filter(members=request.user.id)
     serializer = CommunitySerializer(communities, many=True)
     return Response(serializer.data)
 
@@ -154,8 +185,6 @@ def handle_membership(request, pk):
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
-
-
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()

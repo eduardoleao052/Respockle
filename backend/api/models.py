@@ -19,6 +19,7 @@ class Post(models.Model):
     likes = models.IntegerField(default=0)
     liked_by_user = models.ManyToManyField(User, related_name="liked_posts")
     community = models.ForeignKey(Community, related_name="posts_in_community", on_delete=models.CASCADE)
+    saved_by_user = models.ManyToManyField(User, related_name="saved_posts")
 
     def __str__(self):
         return self.title

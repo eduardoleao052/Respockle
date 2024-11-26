@@ -4,22 +4,19 @@ import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Home() {
+export default function SavedPosts() {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);;
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
-  const [usersInCommunity, setUsersInCommunity] = useState(null);
   const [communities, setCommunities] = useState(null);
-  const communityId = Number(window.location.href.split("/").pop());
   const navigateTo = useNavigate()
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
     getUsers();
     getLikesByUser();
     getCommunities();
-    getCommunityPosts();
-    getUsersInCommunity();
+    getSavedPosts();
   },[])
 
   function getFields(input, field) {
@@ -28,11 +25,11 @@ export default function Home() {
     for (var i=0; i < input.length ; ++i)
         output.push(input[i][field]);
     return output;
-  }
+}
 
-  const getCommunityPosts = () => {
+  const getSavedPosts = () => {
     api
-    .get(`/api/community/${communityId}/`)
+    .get(`/api/posts/saved_posts/`)
     .then((res) => res.data)
     .then((data) => {setPosts(data)})
     .catch((error) => alert(error))
@@ -66,18 +63,6 @@ export default function Home() {
     .catch((error) => alert(error))
   }
 
-  const getUsersInCommunity = () => {
-    api
-    .get(`/api/community/users_in_community/${communityId}`)
-    .then((res) => res.data)
-    .then((data) => {
-      if (data !== usersInCommunity) {
-        setUsersInCommunity(data)
-      }
-    }) 
-    .catch((error) => alert(error))
-  }
-
   const deletePost = (id) => {
     api.delete(`/api/posts/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
@@ -98,22 +83,9 @@ export default function Home() {
     }).catch((error) => alert(error))
   }
 
-  const handle_membership = () => {
-    api.post(`/api/community/handle_membership/${communityId}/`).then((res) => {
-      if (res.status === 201 || res.status === 200) {
-        getUsersInCommunity();
-        getCommunityPosts();
-        navigateTo(0)
-      } else {
-        alert("Failed to like post!")
-      }
-    }).catch((error) => alert(error))
-  }
-
   return (
     <div>
-      <h2>{communities ? communities.filter((c) => c.id === communityId)[0].name : null}</h2>
-      <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>
+      <h2>Saved Posts</h2>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>

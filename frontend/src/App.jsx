@@ -10,6 +10,7 @@ import "./styles/index.css"
 import CreatePost from "./pages/CreatePost"
 import DetailPost from "./pages/DetailPost"
 import Community from "./pages/Community"
+import SavedPosts from "./pages/SavedPosts"
 import { useState } from "react"
 
 function Logout() {
@@ -29,13 +30,14 @@ function App() {
       <BrowserRouter>
         <Header />
         <div className="app">
-          <Sidebar />
+
           <Routes>
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
-            <Route path="/create_post" element={<ProtectedRoute><CreatePost /></ProtectedRoute>}/>
+            <Route path="/" element={<ProtectedRoute><><Sidebar /><Home /></></ProtectedRoute>}/>
+            <Route path="/create_post" element={<ProtectedRoute><><Sidebar /><CreatePost /></></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
-            <Route path='/detail/:id' element={<ProtectedRoute><DetailPost /></ProtectedRoute>} />
-            <Route path='/community/:id' element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path='/detail/:id' element={<ProtectedRoute><><Sidebar /><DetailPost /></></ProtectedRoute>} />
+            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar /><Community /></></ProtectedRoute>} />
+            <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><SavedPosts /></></ProtectedRoute>} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />
             <Route path="*" element={<NotFound />}/>

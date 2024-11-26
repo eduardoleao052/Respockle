@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -10,6 +10,7 @@ export default function Home() {
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
   const [communities, setCommunities] = useState(null);
   const navigateTo = useNavigate()
+  const location = useLocation();
 
   useEffect(() => {
     getPosts();
@@ -84,10 +85,10 @@ export default function Home() {
 
   return (
     <div>
-      <h2>Posts</h2>
+      <h1>Home</h1>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
-          <button key={id} onClick={() => navigateTo(`/detail/${el.id}`)}>
+          <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
           Title: {el.title}
           </button>
           <p>Content: {el.content}</p>
