@@ -25,6 +25,7 @@ function RegisterAndLogout() {
 
 function App() {
   const [trigger, setTrigger] = useState(false);
+  const [feed, setFeed] = useState('created_at')
   return (
     <>
       <BrowserRouter>
@@ -32,12 +33,12 @@ function App() {
         <div className="app">
 
           <Routes>
-            <Route path="/" element={<ProtectedRoute><><Sidebar /><Home /></></ProtectedRoute>}/>
+            <Route path="/" element={<ProtectedRoute><><Sidebar /><Home  feed={feed} setFeed={setFeed}/></></ProtectedRoute>}/>
             <Route path="/create_post" element={<ProtectedRoute><><Sidebar /><CreatePost /></></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
             <Route path='/detail/:id' element={<ProtectedRoute><><Sidebar /><DetailPost /></></ProtectedRoute>} />
-            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar trigger={trigger} /><Community setTrigger={setTrigger}/></></ProtectedRoute>} />
-            <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><SavedPosts /></></ProtectedRoute>} />
+            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar trigger={trigger} /><Community setTrigger={setTrigger} feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
+            <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><SavedPosts feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />
             <Route path="*" element={<NotFound />}/>

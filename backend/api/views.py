@@ -24,7 +24,7 @@ def posts_by_likes_list(request):
 
 @api_view(['GET'])
 def saved_posts(request):
-    posts = Post.objects.filter(saved_by_user = request.user.id)
+    posts = Post.objects.filter(saved_by_user = request.user.id).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
@@ -172,7 +172,7 @@ def user_communities(request):
 
 @api_view(['GET'])
 def community(request, pk):
-    posts = Post.objects.filter(community=pk)
+    posts = Post.objects.filter(community=pk).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 

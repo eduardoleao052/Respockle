@@ -3,14 +3,15 @@ import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
+import SearchBar from '../components/SearchBar';
 
-export default function SavedPosts() {
+export default function SavedPosts({feed, setFeed}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);
-  const [feed, setFeed] = useState('created_at');
   const [dropDown, toggleDropDown] = useState(false);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
   const [communities, setCommunities] = useState(null);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const navigateTo = useNavigate()
   const location = useLocation();
 
@@ -18,7 +19,11 @@ export default function SavedPosts() {
     getUsers();
     getLikesByUser();
     getCommunities();
-    getSavedPosts();
+    if (feed==='created_at') {
+      getSavedPosts();
+    } else {
+      getSavedPostsByLikes();
+    }
   },[])
 
   function formatTime(time) {
@@ -42,7 +47,7 @@ export default function SavedPosts() {
     api
     .get("/api/posts/saved_posts_by_likes/")
     .then((res) => res.data)
-    .then((data) => {setPosts(data)})
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -52,13 +57,26 @@ export default function SavedPosts() {
     for (var i=0; i < input.length ; ++i)
         output.push(input[i][field]);
     return output;
-}
+  }
+
+  const handleSearch = (query) => {
+    if (query === "") {
+      setFilteredPosts(posts);
+    } else {
+      const results = posts.filter(item =>
+        item.title.toLowerCase().includes(query.toLowerCase())
+        || item.content.toLowerCase().includes(query.toLowerCase())
+        || item.author_username.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredPosts(results);
+    }
+  };
 
   const getSavedPosts = () => {
     api
     .get(`/api/posts/saved_posts/`)
     .then((res) => res.data)
-    .then((data) => {setPosts(data)})
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -129,22 +147,27 @@ export default function SavedPosts() {
     <div>
       <h2>Saved Posts</h2>
       <div>
-        <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
-        {dropDown ? 
         <div>
-          <button 
-            style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
-            onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
-            Most Popular
+          <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
+          {dropDown ? 
+          <div>
+            <button 
+              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+              onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
+              Most Popular
+              </button>
+            <button 
+              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+              onClick={() => {getSavedPosts(); setFeed('created_at')}}>
+              Recent
             </button>
-          <button 
-            style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-            onClick={() => {getSavedPosts(); setFeed('created_at')}}>
-            Recent
-          </button>
-        </div> : null}
+          </div> : null}
+        </div>
+        <div style={{ padding: '20px' }}>
+          <SearchBar onSearch={handleSearch} />
+        </div>
       </div>
-      {posts.map((el,id) => 
+      {filteredPosts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
             Title: {el.title}

@@ -6,9 +6,10 @@ export default function Sidebar({trigger}) {
 
   const [userCommunities, setUserCommunities] = useState([]);
   const [origin, setOrigin] = useState(null);
+  const [createCommunityForm, toggleCreateCommunityForm] = useState(null);
   const location = useLocation();
   const from = location.state?.from?.pathname || '/'; 
-  
+
 
   const getOrigin = () => {
     const HERE = window.location.href;
@@ -59,11 +60,13 @@ export default function Sidebar({trigger}) {
           <a href={`/saved_posts`}>Saved</a>
         </div>
         <br />
+        <div style={{backgroundColor: origin === 'create_community' ? 'gray' : 'white'}}>
+          <button onClick={() => toggleCreateCommunityForm(!createCommunityForm)}>[+]</button>
+        </div>
       {userCommunities.map((el,id)=>
         <div key={el.id} style={{backgroundColor: el.id === origin ? 'gray' : 'white'}}>
           <a href={`/community/${el.id}`}>{el.name}</a>
         </div>
-
       )}
     </div>
   )

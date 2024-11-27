@@ -3,23 +3,42 @@ import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
+import SearchBar from '../components/SearchBar';
+import ResultsList from '../components/ResultsList';
 
-export default function Home() {
+export default function Home({feed, setFeed}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);
-  const [feed, setFeed] = useState('created_at');
   const [dropDown, toggleDropDown] = useState(false);
-  const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);;
+  const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
   const [communities, setCommunities] = useState(null);
   const navigateTo = useNavigate();
   const location = useLocation();
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   useEffect(() => {
-    getPosts();
+    if (feed==='created_at') {
+      getPosts();
+    } else {
+      getPostsByLikes();
+    }
     getUsers();
     getLikesByUser();
     getCommunities();
   },[])
+
+  const handleSearch = (query) => {
+    if (query === "") {
+      setFilteredPosts(posts);
+    } else {
+      const results = posts.filter(item =>
+        item.title.toLowerCase().includes(query.toLowerCase())
+        || item.content.toLowerCase().includes(query.toLowerCase())
+        || item.author_username.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredPosts(results);
+    }
+  };
 
   function formatTime(time) {
     let timeSinceCreation = (Date.now() - new Date(time).getTime())/1000;
@@ -44,13 +63,13 @@ export default function Home() {
     for (var i=0; i < input.length ; ++i)
         output.push(input[i][field]);
     return output;
-}
+  }
 
   const getPostsByLikes = () => {
     api
     .get("/api/posts_by_likes/")
     .then((res) => res.data)
-    .then((data) => {setPosts(data)})
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -58,7 +77,7 @@ export default function Home() {
     api
     .get("/api/posts/")
     .then((res) => res.data)
-    .then((data) => {setPosts(data)})
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -68,6 +87,10 @@ export default function Home() {
     .then((res) => res.data)
     .then((data) => {
       setPosts((p) => 
+        [...p.slice(0,getFields(p,'id').indexOf(data.id)),
+          data,
+        ...(p.slice(getFields(p,'id').indexOf(data.id) + 1, p.length))])
+      setFilteredPosts((p) => 
         [...p.slice(0,getFields(p,'id').indexOf(data.id)),
           data,
         ...(p.slice(getFields(p,'id').indexOf(data.id) + 1, p.length))])
@@ -108,6 +131,7 @@ export default function Home() {
     api.delete(`/api/posts/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
         setPosts((p) => p.filter((el) => el.id !== id))
+        setFilteredPosts((p) => p.filter((el) => el.id !== id))
       }
       else alert("Failed to delete post!")
     }).catch((error) => alert(error))
@@ -128,22 +152,27 @@ export default function Home() {
     <div>
       <h1>Home</h1>
       <div>
-        <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
-        {dropDown ? 
         <div>
-          <button 
-            style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
-            onClick={() => {getPostsByLikes(); setFeed('likes')}}>
-            Most Popular
+          <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
+          {dropDown ? 
+          <div>
+            <button 
+              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+              onClick={() => {getPostsByLikes(); setFeed('likes')}}>
+              Most Popular
+              </button>
+            <button 
+              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+              onClick={() => {getPosts(); setFeed('created_at')}}>
+              Recent
             </button>
-          <button 
-            style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-            onClick={() => {getPosts(); setFeed('created_at')}}>
-            Recent
-          </button>
-        </div> : null}
+          </div> : null}
+        </div>
+        <div style={{ padding: '20px' }}>
+            <SearchBar onSearch={handleSearch} />
+        </div>
       </div>
-      {posts.map((el,id) => 
+      {filteredPosts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
           Title: {el.title}

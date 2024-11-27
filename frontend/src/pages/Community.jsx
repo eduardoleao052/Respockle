@@ -3,15 +3,16 @@ import { useState, useEffect } from 'react'
 import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
+import SearchBar from '../components/SearchBar';
 
-export default function Community({setTrigger}) {
+export default function Community({setTrigger, feed, setFeed}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);
-  const [feed, setFeed] = useState('created_at');
   const [dropDown, toggleDropDown] = useState(false);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
   const [usersInCommunity, setUsersInCommunity] = useState(null);
   const [communities, setCommunities] = useState(null);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const communityId = Number(window.location.href.split("/").pop());
   const navigateTo = useNavigate()
   const location = useLocation()
@@ -20,7 +21,11 @@ export default function Community({setTrigger}) {
     getUsers();
     getLikesByUser();
     getCommunities();
-    getCommunityPosts();
+    if (feed==='created_at') {
+      getCommunityPosts();
+    } else {
+      getCommunityPostsByLikes();
+    }
     getUsersInCommunity();
   },[])
 
@@ -41,11 +46,24 @@ export default function Community({setTrigger}) {
     } else return 'now'
   }
 
+  const handleSearch = (query) => {
+    if (query === "") {
+      setFilteredPosts(posts);
+    } else {
+      const results = posts.filter(item =>
+        item.title.toLowerCase().includes(query.toLowerCase())
+        || item.content.toLowerCase().includes(query.toLowerCase())
+        || item.author_username.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredPosts(results);
+    }
+  };
+
   const getCommunityPostsByLikes = () => {
     api
     .get(`/api/community_by_like/${communityId}/`)
     .then((res) => res.data)
-    .then((data) => {setPosts(data)})
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -61,7 +79,7 @@ export default function Community({setTrigger}) {
     api
     .get(`/api/community/${communityId}/`)
     .then((res) => res.data)
-    .then((data) => {setPosts(data)})
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
   }
 
@@ -159,22 +177,27 @@ export default function Community({setTrigger}) {
       <h4>{communities ? communities.filter((c) => c.id === communityId)[0].members.length : null}</h4>
       <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>
       <div>
-        <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
-        {dropDown ? 
         <div>
-          <button 
-            style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
-            onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
-            Most Popular
+          <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
+          {dropDown ? 
+          <div>
+            <button 
+              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+              onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
+              Most Popular
+              </button>
+            <button 
+              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+              onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
+              Recent
             </button>
-          <button 
-            style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-            onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
-            Recent
-          </button>
-        </div> : null}
+          </div> : null}
+        </div>
+        <div style={{ padding: '20px' }}>
+          <SearchBar onSearch={handleSearch} />
+        </div>
       </div>
-      {posts.map((el,id) => 
+      {filteredPosts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
             Title: {el.title}
