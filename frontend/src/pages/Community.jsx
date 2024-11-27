@@ -6,7 +6,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Community({setTrigger}) {
   const [posts, setPosts] = useState([]);
-  const [User, setUser] = useState(null);;
+  const [User, setUser] = useState(null);
+  const [feed, setFeed] = useState('created_at');
+  const [dropDown, toggleDropDown] = useState(false);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
   const [usersInCommunity, setUsersInCommunity] = useState(null);
   const [communities, setCommunities] = useState(null);
@@ -21,6 +23,31 @@ export default function Community({setTrigger}) {
     getCommunityPosts();
     getUsersInCommunity();
   },[])
+
+  function formatTime(time) {
+    let timeSinceCreation = (Date.now() - new Date(time).getTime())/1000;
+    let days = Math.floor(timeSinceCreation/84600)
+    let hours = Math.floor((timeSinceCreation - days*84600)/3600)
+    let minutes = Math.floor((timeSinceCreation - 3600*hours - days*84600)/60)
+    let seconds = Math.floor((timeSinceCreation - 3600*hours - 60*minutes - days*84600))
+    if (days >= 1) {
+      return `${days} days`;
+    } else if (hours >= 1) {
+      return `${hours} h`
+    } else if (minutes >= 1) {
+      return `${minutes} m`
+    } else if (seconds >= 1) {
+      return `${seconds} s`
+    } else return 'now'
+  }
+
+  const getCommunityPostsByLikes = () => {
+    api
+    .get(`/api/community_by_like/${communityId}/`)
+    .then((res) => res.data)
+    .then((data) => {setPosts(data)})
+    .catch((error) => alert(error))
+  }
 
   function getFields(input, field) {
     if (!input) return []
@@ -37,6 +64,20 @@ export default function Community({setTrigger}) {
     .then((data) => {setPosts(data)})
     .catch((error) => alert(error))
   }
+
+  const getPost = (id) => {
+    api
+    .get(`/api/posts/detail/${id}/`)
+    .then((res) => res.data)
+    .then((data) => {
+      setPosts((p) => 
+        [...p.slice(0,getFields(p,'id').indexOf(data.id)),
+          data,
+        ...(p.slice(getFields(p,'id').indexOf(data.id) + 1, p.length))])
+    })
+    .catch((error) => alert(error))
+  }
+
 
   const getUsers = () => {
     api
@@ -68,7 +109,7 @@ export default function Community({setTrigger}) {
 
   const getUsersInCommunity = () => {
     api
-    .get(`/api/community/users_in_community/${communityId}`)
+    .get(`/api/community/users_in_community/${communityId}/`)
     .then((res) => res.data)
     .then((data) => {
       if (data !== usersInCommunity) {
@@ -81,7 +122,7 @@ export default function Community({setTrigger}) {
   const deletePost = (id) => {
     api.delete(`/api/posts/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
-        getCommunityPosts()
+        setPosts((p) => p.filter((el) => el.id !== id))
       }
       else alert("Failed to delete post!")
     }).catch((error) => alert(error))
@@ -90,8 +131,8 @@ export default function Community({setTrigger}) {
   const handleLike = (el) => {
     api.post(`/api/posts/like/${el.id}/`).then((res) => {
       if (res.status === 201 || res.status === 200) {
-        getCommunityPosts();
-        getLikesByUser();
+        getPost(el.id)
+        getLikesByUser(); 
       } else {
         alert("Failed to like post!")
       }
@@ -102,8 +143,8 @@ export default function Community({setTrigger}) {
     api.post(`/api/community/handle_membership/${communityId}/`).then((res) => {
       if (res.status === 201 || res.status === 200) {
         getUsersInCommunity();
+        getCommunities();
         getCommunityPosts();
-        //navigateTo(0)
         setTrigger((t) => !t)
       } else {
         alert("Failed to like post!")
@@ -114,7 +155,25 @@ export default function Community({setTrigger}) {
   return (
     <div>
       <h2>{communities ? communities.filter((c) => c.id === communityId)[0].name : null}</h2>
+      <h4>{communities ? communities.filter((c) => c.id === communityId)[0].description : null}</h4>
+      <h4>{communities ? communities.filter((c) => c.id === communityId)[0].members.length : null}</h4>
       <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>
+      <div>
+        <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
+        {dropDown ? 
+        <div>
+          <button 
+            style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+            onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
+            Most Popular
+            </button>
+          <button 
+            style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+            onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
+            Recent
+          </button>
+        </div> : null}
+      </div>
       {posts.map((el,id) => 
         <div className="post-div" key={id}>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
@@ -123,6 +182,7 @@ export default function Community({setTrigger}) {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
+          <p>{formatTime(el.created_at)}</p>
           <button onClick={() => window.scrollTo(0, 0)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
           </button>

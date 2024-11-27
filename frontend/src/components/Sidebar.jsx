@@ -54,16 +54,14 @@ export default function Sidebar({trigger}) {
       <h1>Sidebar</h1>
         <div style={{backgroundColor: origin === 'home' ? 'gray' : 'white'}}>
           <a href={`/`}>Home</a>
-          <p> All posts</p>      
         </div>
         <div style={{backgroundColor: origin === 'saved_posts' ? 'gray' : 'white'}}>
-          <a href={`/saved_posts`}>Saved Posts</a>
-          <p> My saved posts</p>      
+          <a href={`/saved_posts`}>Saved</a>
         </div>
+        <br />
       {userCommunities.map((el,id)=>
         <div key={el.id} style={{backgroundColor: el.id === origin ? 'gray' : 'white'}}>
           <a href={`/community/${el.id}`}>{el.name}</a>
-          <p> {el.description}</p>  
         </div>
 
       )}

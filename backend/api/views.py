@@ -12,13 +12,25 @@ from rest_framework.decorators import api_view
 
 @api_view(['GET'])
 def posts_list(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def posts_by_likes_list(request):
+    posts = Post.objects.all().order_by('-likes')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def saved_posts(request):
     posts = Post.objects.filter(saved_by_user = request.user.id)
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def saved_posts_by_likes(request):
+    posts = Post.objects.filter(saved_by_user = request.user.id).order_by('-likes')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
@@ -75,7 +87,6 @@ def post_update(request, pk):
 		serializer.save()
 
 	return Response(serializer.data)
-
 
 @api_view(['DELETE'])
 def post_delete(request, pk):
@@ -166,6 +177,12 @@ def community(request, pk):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def community_by_likes(request, pk):
+    posts = Post.objects.filter(community=pk).order_by('-likes')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def users_in_community(request, pk):
     users = User.objects.filter(communities = pk)
     serializer = UserSerializer(users, many=True)
@@ -176,10 +193,8 @@ def handle_membership(request, pk):
     community = Community.objects.get(id=pk)
     user = User.objects.get(id = request.user.id)
     if user.communities.contains(community):
-        #community.members -= 1
         user.communities.remove(community)
     else:
-        #community.members += 1
         user.communities.add(community)
     serializer = CommunitySerializer(instance=community, data={'name': community.name, 'description': community.description})
     if serializer.is_valid():
