@@ -27,7 +27,7 @@ export default function Community({setTrigger, feed, setFeed}) {
       getCommunityPostsByLikes();
     }
     getUsersInCommunity();
-  },[])
+  },[location])
 
   function formatTime(time) {
     let timeSinceCreation = (Date.now() - new Date(time).getTime())/1000;
