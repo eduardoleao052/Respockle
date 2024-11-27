@@ -176,6 +176,16 @@ def community(request, pk):
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
+@api_view(['POST'])
+def community_create(request):
+    data=request.data
+    data["author_username"] = request.user.username
+    data["members"] = [request.user.id]
+    serializer = CommunitySerializer(data=data)
+    if serializer.is_valid():
+        serializer.save(author=request.user)
+    return Response(serializer.data)
+
 @api_view(['GET'])
 def community_by_likes(request, pk):
     posts = Post.objects.filter(community=pk).order_by('-likes')

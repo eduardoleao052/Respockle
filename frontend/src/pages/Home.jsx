@@ -184,7 +184,6 @@ export default function Home({feed, setFeed}) {
           <button onClick={() => navigateTo(`/community/${el.community}`)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
           </button>
-          {el.author === User?.id ? <button onClick={() => deletePost(el.id)}>Delete</button> : null}
           <button
               style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
               onClick={() => handleLike(el)}>

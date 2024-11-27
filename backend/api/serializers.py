@@ -32,4 +32,5 @@ class CommentSerializer(serializers.ModelSerializer):
 class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
-        fields = ["id", "name", "description", "members"]
+        fields = ["id", "name", "description", "members", "author", "author_username"]
+        extra_kwargs = {"author" : {"read_only": True}}

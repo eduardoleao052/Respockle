@@ -9,6 +9,7 @@ export default function DetailPost() {
   const idRoot = window.location.href.split("/").pop()
   const id = Number(isNaN(idRoot) ? idRoot.slice(0, idRoot.length - 1) : idRoot);
   const [post, setPost] = useState()
+  const [User, setUser] = useState(null);
   const [content, setContent] = useState("")
   const [comments, setComments] = useState([])
   const [communities, setCommunities] = useState(null);
@@ -19,6 +20,7 @@ export default function DetailPost() {
 
   useEffect(() => {
     getPost();
+    getUsers();
     getCommunities();
     getPostsLikedByUser();
     getPostsSavedByUser();
@@ -47,6 +49,14 @@ export default function DetailPost() {
       console.log(data)
       setPostsSavedByUsers(data)
     }) 
+    .catch((error) => alert(error))
+  }
+
+  const getUsers = () => {
+    api
+    .get("/api/posts/user/")
+    .then((res) => res.data)
+    .then((data) => {setUser(data)})
     .catch((error) => alert(error))
   }
 
@@ -171,7 +181,7 @@ export default function DetailPost() {
         <button onClick={() => navigateTo(`/community/${post.community}`)}>
         <p>Community: {communities ? communities.filter((community) => community.id === post.community)[0].name : null}</p>
         </button>        
-        <button onClick={() => deletePost()}>Delete</button>
+        {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button onClick={() => deletePost(post.id)}>Delete</button> : null}
         <button 
             style={{backgroundColor: getFields(PostsSavedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 
             onClick={() => handleSave(post)}>

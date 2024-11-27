@@ -92,6 +92,10 @@ export default function Community({setTrigger, feed, setFeed}) {
         [...p.slice(0,getFields(p,'id').indexOf(data.id)),
           data,
         ...(p.slice(getFields(p,'id').indexOf(data.id) + 1, p.length))])
+      setFilteredPosts((p) => 
+        [...p.slice(0,getFields(p,'id').indexOf(data.id)),
+          data,
+        ...(p.slice(getFields(p,'id').indexOf(data.id) + 1, p.length))])
     })
     .catch((error) => alert(error))
   }
@@ -141,6 +145,7 @@ export default function Community({setTrigger, feed, setFeed}) {
     api.delete(`/api/posts/delete/${id}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
         setPosts((p) => p.filter((el) => el.id !== id))
+        setFilteredPosts((p) => p.filter((el) => el.id !== id))
       }
       else alert("Failed to delete post!")
     }).catch((error) => alert(error))
@@ -209,7 +214,6 @@ export default function Community({setTrigger, feed, setFeed}) {
           <button onClick={() => window.scrollTo(0, 0)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
           </button>
-          {el.author === User?.id ? <button onClick={() => deletePost(el.id)}>Delete</button> : null}
           <button
               style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
               onClick={() => handleLike(el)}>

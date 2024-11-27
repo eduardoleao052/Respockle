@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 class Community(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='communities_created_by_user', default=1)
+    author_username = models.TextField(default='')
     members = models.ManyToManyField(User, related_name="communities")
 
     def __str__(self):

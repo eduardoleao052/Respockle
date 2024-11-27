@@ -15,6 +15,7 @@ export default function Header() {
         setInterval(() => {
             setToken(localStorage.getItem(ACCESS_TOKEN));
         },10);
+        getUser()
     },[])
 
     const handlePullData = () => {
@@ -49,6 +50,7 @@ export default function Header() {
   return (
     <>
         <h1 className='header-title'>Dalilah the Crafty's Wonderful App for Diabeticals</h1>
+        <h2>{user?.username}</h2>
         <nav className='header-navbar'>
             {
                 token ? 

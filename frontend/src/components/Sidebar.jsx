@@ -1,15 +1,26 @@
 import {useState,useEffect} from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../api"
 
 export default function Sidebar({trigger}) {
 
   const [userCommunities, setUserCommunities] = useState([]);
   const [origin, setOrigin] = useState(null);
-  const [createCommunityForm, toggleCreateCommunityForm] = useState(null);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [createCommunityForm, toggleCreateCommunityForm] = useState(false);
   const location = useLocation();
   const from = location.state?.from?.pathname || '/'; 
+  const [communities, setCommunities] = useState(null);
+  const navigateTo = useNavigate()
 
+  function getFields(input, field) {
+    if (!input) return []
+    var output = [];
+    for (var i=0; i < input.length ; ++i)
+        output.push(input[i][field]);
+    return output;
+  }
 
   const getOrigin = () => {
     const HERE = window.location.href;
@@ -41,17 +52,55 @@ export default function Sidebar({trigger}) {
     })
     .catch((error) => alert(error))
   }
+
+  const handleCreateCommunity = () => {
+    if (getFields(communities, 'name').map((el) => el.toLowerCase()).includes(name.toLowerCase())) {
+      alert(`There already is a community called ${name}`)
+      return
+    }
+    api.post(`/api/community/create/`, {name,description}).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        console.log('created')
+        console.log({name,description})
+        navigateTo(0)
+      } else {
+        alert("Failed to create post!")
+      }
+    }).catch((error) => alert(error))
+    setName('');
+    setDescription('');
+    //navigateTo(`/community/${XXXXXXXXX}`)
+  }
   
   useEffect(() => {
     getUserCommunities();
   },[trigger])
 
   useEffect(() => {
+    getCommunities();
+  },[trigger])
+
+  useEffect(() => {
     getOrigin();
   },[location])
 
+  const getCommunities = () => {
+    api
+    .get("/api/communities/")
+    .then((res) => res.data)
+    .then((data) => {setCommunities(data)})
+    .catch((error) => alert(error))
+  }
+
   return (
     <div>
+      {createCommunityForm ? <div className='sidebar-create-community-pupup-div'>
+        <p>Name:</p>
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+        <p>Description:</p>
+        <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
+        <button onClick={handleCreateCommunity}>Create!</button>
+      </div> : null}
       <h1>Sidebar</h1>
         <div style={{backgroundColor: origin === 'home' ? 'gray' : 'white'}}>
           <a href={`/`}>Home</a>

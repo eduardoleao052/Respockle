@@ -14,30 +14,36 @@ export default function CreatePost() {
 
   useEffect(() => {
     getUsers();
-    getCommunities();
   },[])
+
+  function getFields(input, field) {
+    if (!input) return []
+    var output = [];
+    for (var i=0; i < input.length ; ++i)
+        output.push(input[i][field]);
+    return output;
+  }
 
   const getUsers = () => {
     api
     .get("/api/posts/user/")
     .then((res) => res.data)
-    .then((data) => {setUser(data)})
+    .then((data) => {setUser(data); getCommunities(data);})
     .catch((error) => alert(error))
   }
 
-  const getCommunities = () => {
+  const getCommunities = (user) => {
     api
     .get("/api/communities/")
     .then((res) => res.data)
-    .then((data) => {setCommunities(data)})
+    .then((data) => {setCommunities(data.filter((el) => el.members.includes(user.id)))})
     .catch((error) => alert(error))
   }
 
-  const createPost = (e) => {
+  const createPost = () => {
     if (document.getElementById("community").value === "") {
         return
     }
-    e.preventDefault()
     api.post(`/api/posts/create/`, {content,title,community}).then((res) => {
       if (res.status === 201 || res.status === 200) {
         console.log('posted')
