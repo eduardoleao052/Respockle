@@ -11,6 +11,7 @@ import CreatePost from "./pages/CreatePost"
 import DetailPost from "./pages/DetailPost"
 import Community from "./pages/Community"
 import SavedPosts from "./pages/SavedPosts"
+import Profile from "./pages/Profile"
 import { useState } from "react"
 
 function Logout() {
@@ -39,6 +40,7 @@ function App() {
             <Route path='/detail/:id' element={<ProtectedRoute><><Sidebar /><DetailPost /></></ProtectedRoute>} />
             <Route path='/community/:id' element={<ProtectedRoute><><Sidebar trigger={trigger} /><Community setTrigger={setTrigger} feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
             <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><SavedPosts feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
+            <Route path='/profile/:id' element={<ProtectedRoute><><Sidebar /><Profile feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />
             <Route path="*" element={<NotFound />}/>

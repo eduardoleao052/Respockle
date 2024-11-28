@@ -23,6 +23,7 @@ export default function Community({setTrigger, feed, setFeed}) {
     getUsers();
     getLikesByUser();
     getCommunities();
+    setTrigger((t) => !t)
     if (feed==='created_at') {
       getCommunityPosts();
     } else if (feed==='likes') {
@@ -189,10 +190,11 @@ export default function Community({setTrigger, feed, setFeed}) {
 
   return (
     <div>
-      <h2>{communities ? communities.filter((c) => c.id === communityId)[0].name : null}</h2>
-      <h4>{communities ? communities.filter((c) => c.id === communityId)[0].description : null}</h4>
-      <h4>{communities ? communities.filter((c) => c.id === communityId)[0].members.length : null}</h4>
-      {(communities?.filter((c) => c.id === communityId)[0].author === User?.id) ? 
+      <img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === communityId)[0]?.community_picture ? communities.filter((c) => c.id === communityId)[0]?.community_picture : 'assets/default_profile_picture.png': 'assets/default_profile_picture.png'}`} alt="" />
+      <h2>{communities ? communities.filter((c) => c.id === communityId)[0]?.name : null}</h2>
+      <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.description : null}</h4>
+      <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.members.length : null}</h4>
+      {(communities?.filter((c) => c.id === communityId)[0]?.author === User?.id) ? 
       <button onClick={() => setDeletePopUp(true)}>Delete Community</button> :
       <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>}
       {deletePopUp ?

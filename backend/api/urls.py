@@ -17,6 +17,7 @@ urlpatterns = [
     path('posts/delete/<int:pk>/', views.post_delete, name="post-delete"),
     path('posts/update/', views.post_update, name="post-update"),
     path('posts/user/', views.current_user, name="current-user"),
+    path('posts/user/username/<int:pk>/', views.username, name="username"),
     path('posts/posts_liked_by_user/', views.posts_liked_by_user, name="posts-liked-by-user"),
     path('posts/posts_reported_by_user/', views.posts_reported_by_user, name="posts-reported-by-user"),
     path('posts/posts_saved_by_user/', views.posts_saved_by_user, name="posts-saved-by-user"),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('community_by_report/<int:pk>/', views.community_by_reports, name="community-by-reports"),
     path('community/users_in_community/<int:pk>/', views.users_in_community, name="users-in-community"),
     path('community/handle_membership/<int:pk>/', views.handle_membership, name="handle-membership"),
-    path('user/communities/', views.user_communities, name="user-communities")
+    path('user/communities/', views.user_communities, name="user-communities"),
+    path('user/profile/<int:pk>/', views.user_profile, name="user-profile")
 
 ]

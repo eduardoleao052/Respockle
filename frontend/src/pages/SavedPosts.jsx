@@ -97,7 +97,13 @@ export default function SavedPosts({feed, setFeed}) {
     .catch((error) => alert(error))
   }
   
-
+  const getUsername = (id) => {
+    api
+    .get(`/api/posts/user/username/${id}/`)
+    .then((res) => res.data)
+    .then((data) => {return data})
+    .catch((error) => alert(error))
+  }
 
   const getUsers = () => {
     api
@@ -125,16 +131,6 @@ export default function SavedPosts({feed, setFeed}) {
       }
     }) 
     .catch((error) => alert(error))
-  }
-
-  const deletePost = (id) => {
-    api.delete(`/api/posts/delete/${id}/`).then((res) => {
-      if (res.status === 204 || res.status === 200) {
-        setPosts((p) => p.filter((el) => el.id !== id))
-        setFilteredPosts((p) => p.filter((el) => el.id !== id))
-      }
-      else alert("Failed to delete post!")
-    }).catch((error) => alert(error))
   }
 
   const handleLike = (el) => {

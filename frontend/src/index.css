@@ -40,3 +40,14 @@
     opacity: 0.3;
     z-index: 999;
 }
+
+.header-profile-picture {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.header-profile-a {
+    display: flex;
+    flex-direction: row;
+}

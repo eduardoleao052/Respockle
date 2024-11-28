@@ -10,13 +10,17 @@ export default function Header() {
     const [user, setUser] = useState(null);
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [profile, setProfile] = useState('');
 
     useEffect(() => {
         setInterval(() => {
             setToken(localStorage.getItem(ACCESS_TOKEN));
         },10);
-        getUser()
-    },[])
+        console.log("aaaaa")
+        if (token) {
+          getUser()
+        }
+    },[token])
 
     const handlePullData = () => {
         api
@@ -43,6 +47,17 @@ export default function Header() {
         .then((res) => res.data)
         .then((data) => {
             setUser(data);
+            getProfile(data.id)
+        })
+        .catch((error) => console.log(`User not logged in. Error message: ${error}`))
+    }
+
+    const getProfile = (pk) => {
+        api
+        .get(`/api/user/profile/${pk}/`)
+        .then((res) => res.data)
+        .then((data) => {
+            setProfile(data);
         })
         .catch((error) => console.log(`User not logged in. Error message: ${error}`))
     }
@@ -50,7 +65,6 @@ export default function Header() {
   return (
     <>
         <h1 className='header-title'>Dalilah the Crafty's Wonderful App for Diabeticals</h1>
-        <h2>{user?.username}</h2>
         <nav className='header-navbar'>
             {
                 token ? 
@@ -60,7 +74,9 @@ export default function Header() {
                         <CommunitySearchBar onClick={handlePullData} onSearch={handleSearch} />
                         {document.activeElement === document.getElementById('community_searchbar') ? <ResultsList results={filteredData} /> : null}
                     </div>
-                    <a href="/create_post">Create Post</a>                      
+                    <a href="/create_post">Create Post</a>    
+                    <br />
+                    <a className="header-profile-a" href={`/profile/${user?.id}`}  onClick={() => isLoggedIn()}><p>{user?.username}</p><img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}${profile.profile_picture}`}></img></a>                  
                 </div>
                 : 
                 <div className='header-navbar-authtrue'>

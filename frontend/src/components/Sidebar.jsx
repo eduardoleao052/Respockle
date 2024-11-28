@@ -9,6 +9,7 @@ export default function Sidebar({trigger}) {
   const [origin, setOrigin] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [community_picture, set_community_picture] = useState('');
   const [createCommunityForm, toggleCreateCommunityForm] = useState(false);
   const location = useLocation();
   const from = location.state?.from?.pathname || '/'; 
@@ -57,7 +58,16 @@ export default function Sidebar({trigger}) {
       alert(`There already is a community called ${name}`)
       return
     }
-    api.post(`/api/community/create/`, {name,description}).then((res) => {
+
+    let formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    if (community_picture) {
+        formData.append("community_picture", community_picture); // Only add if file is selected
+    }
+    console.log(formData)
+
+    api.post(`/api/community/create/`, formData).then((res) => {
       if (res.status === 201 || res.status === 200) {
         console.log('created')
         getCommunities(name)
@@ -67,6 +77,7 @@ export default function Sidebar({trigger}) {
     }).catch((error) => alert(error))
     setName('');
     setDescription('');
+    set_community_picture(null);
   }
   
   useEffect(() => {
@@ -105,8 +116,9 @@ export default function Sidebar({trigger}) {
           <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
           <p>Description:</p>
           <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-          <button onClick={() => toggleCreateCommunityForm((c) => !c)}>Back!</button>
-          <button onClick={handleCreateCommunity}>Create!</button>
+          <input type="file" accept="image/*" onChange={(e) => set_community_picture(e.target.files[0])}/>
+          <button onClick={() => toggleCreateCommunityForm((c) => !c)}>Cancel</button>
+          <button onClick={handleCreateCommunity}>Create</button>
         </div>
         <div className='popup-blackout'></div>
       </> : null}
@@ -123,7 +135,7 @@ export default function Sidebar({trigger}) {
         </div>
       {userCommunities.map((el,id)=>
         <div key={el.id} style={{backgroundColor: el.id === origin ? 'gray' : 'white'}}>
-          <a href={`/community/${el.id}`}>{el.name}</a>
+          <button onClick={() => navigateTo(`/community/${el.id}`)}>{el.name}</button>
         </div>
       )}
     </div>

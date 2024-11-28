@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, PostSerializer, CommunitySerializer, CommentSerializer
+from .serializers import UserSerializer, PostSerializer, CommunitySerializer, CommentSerializer, ProfileSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Post, Community, Comment
+from .models import Post, Community, Comment, Profile
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
 
 # <-------- POSTS --------->
 
@@ -50,6 +51,12 @@ def post_detail(request, pk):
 @api_view(['GET'])
 def current_user(request):
     users = User.objects.get(id = request.user.id)
+    serializer = UserSerializer(users)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def username(request, pk):
+    users = User.objects.get(id = pk)
     serializer = UserSerializer(users)
     return Response(serializer.data)
 
@@ -206,13 +213,14 @@ def community_delete(request, pk):
 
 @api_view(['POST'])
 def community_create(request):
-    data=request.data
+    data = request.data.copy()
     data["author_username"] = request.user.username
-    data["members"] = [request.user.id]
+    data["members"] = request.user.id
     serializer = CommunitySerializer(data=data)
     if serializer.is_valid():
         serializer.save(author=request.user)
-    return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def community_by_likes(request, pk):
@@ -230,6 +238,12 @@ def community_by_reports(request, pk):
 def users_in_community(request, pk):
     users = User.objects.filter(communities = pk)
     serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def user_profile(request, pk):
+    profile = Profile.objects.get(user_id = pk)
+    serializer = ProfileSerializer(profile)
     return Response(serializer.data)
 
 @api_view(['POST'])
