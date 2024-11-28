@@ -20,6 +20,8 @@ class Post(models.Model):
     author_username = models.TextField(default='')
     likes = models.IntegerField(default=0)
     liked_by_user = models.ManyToManyField(User, related_name="liked_posts")
+    reports = models.IntegerField(default=0)
+    reported_by_user = models.ManyToManyField(User, related_name="reported_posts")
     community = models.ForeignKey(Community, related_name="posts_in_community", on_delete=models.CASCADE)
     saved_by_user = models.ManyToManyField(User, related_name="saved_posts")
 
@@ -38,3 +40,11 @@ class Comment(models.Model):
     def __str__(self):
         return self.post.title + ' comment'
     
+class Profile(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    email = models.CharField(max_length=100, default='')
+    bio = models.TextField()
+    profile_picture = models.ImageField(default='../assets/default_profile_picture.png')
+
+    def __str__(self):
+        return self.name

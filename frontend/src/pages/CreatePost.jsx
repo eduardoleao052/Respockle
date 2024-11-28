@@ -72,7 +72,7 @@ export default function CreatePost() {
         <textarea id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
         <br />
         <label htmlFor="community">Choose a Community:</label>
-            <select onChange={(e) => {setCommunity(e.target.value); console.log('AAAAA')}} id="community" name="community">
+            <select onChange={(e) => {setCommunity(e.target.value)}} id="community" name="community">
             <option value=""> -- select an option -- </option>
             {communities.map((el, id) => <option key={id} value={el.id} required>{el.name}</option>)}
             </select>

@@ -4,6 +4,7 @@ import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
+import "../index.css"
 
 export default function Community({setTrigger, feed, setFeed}) {
   const [posts, setPosts] = useState([]);
@@ -13,6 +14,7 @@ export default function Community({setTrigger, feed, setFeed}) {
   const [usersInCommunity, setUsersInCommunity] = useState(null);
   const [communities, setCommunities] = useState(null);
   const [filteredPosts, setFilteredPosts] = useState([]);
+  const [deletePopUp, setDeletePopUp] = useState(false);
   const communityId = Number(window.location.href.split("/").pop());
   const navigateTo = useNavigate()
   const location = useLocation()
@@ -23,8 +25,10 @@ export default function Community({setTrigger, feed, setFeed}) {
     getCommunities();
     if (feed==='created_at') {
       getCommunityPosts();
-    } else {
+    } else if (feed==='likes') {
       getCommunityPostsByLikes();
+    } else if (feed==='reports') {
+      getCommunityPostsByReports();
     }
     getUsersInCommunity();
   },[location])
@@ -62,6 +66,14 @@ export default function Community({setTrigger, feed, setFeed}) {
   const getCommunityPostsByLikes = () => {
     api
     .get(`/api/community_by_like/${communityId}/`)
+    .then((res) => res.data)
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
+    .catch((error) => alert(error))
+  }
+
+  const getCommunityPostsByReports = () => {
+    api
+    .get(`/api/community_by_report/${communityId}/`)
     .then((res) => res.data)
     .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
@@ -141,11 +153,11 @@ export default function Community({setTrigger, feed, setFeed}) {
     .catch((error) => alert(error))
   }
 
-  const deletePost = (id) => {
-    api.delete(`/api/posts/delete/${id}/`).then((res) => {
+  const deleteCommunity = () => {
+    api.delete(`/api/community/delete/${communityId}/`).then((res) => {
       if (res.status === 204 || res.status === 200) {
-        setPosts((p) => p.filter((el) => el.id !== id))
-        setFilteredPosts((p) => p.filter((el) => el.id !== id))
+        navigateTo('/')
+        setTrigger((t) => !t)
       }
       else alert("Failed to delete post!")
     }).catch((error) => alert(error))
@@ -180,14 +192,29 @@ export default function Community({setTrigger, feed, setFeed}) {
       <h2>{communities ? communities.filter((c) => c.id === communityId)[0].name : null}</h2>
       <h4>{communities ? communities.filter((c) => c.id === communityId)[0].description : null}</h4>
       <h4>{communities ? communities.filter((c) => c.id === communityId)[0].members.length : null}</h4>
-      <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>
+      {(communities?.filter((c) => c.id === communityId)[0].author === User?.id) ? 
+      <button onClick={() => setDeletePopUp(true)}>Delete Community</button> :
+      <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>}
+      {deletePopUp ?
+        <>
+          <div className='popup-div'>
+            <p>You sure you wanna delete?</p>
+            <button onClick={() => setDeletePopUp(false)}>Cancel</button>
+            <button onClick={() => deleteCommunity()}>
+              Confirm
+            </button>
+          </div>
+          <div className='popup-blackout'></div>
+        </> :
+        null
+      }
       <div>
         <div>
-          <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
+          <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
           {dropDown ? 
           <div>
             <button 
-              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+              style={{backgroundColor: feed === 'likes' ? 'blue' : 'white'}}
               onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
               Most Popular
               </button>
@@ -196,6 +223,12 @@ export default function Community({setTrigger, feed, setFeed}) {
               onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
               Recent
             </button>
+            {communities?.filter((c) => c.id === communityId)[0].author === User?.id ?
+            <button 
+              style={{backgroundColor: feed === 'reports' ? 'blue' : 'white'}}
+              onClick={() => {getCommunityPostsByReports(); setFeed('reports')}}>
+              Controversial
+            </button> : null}
           </div> : null}
         </div>
         <div style={{ padding: '20px' }}>
@@ -210,6 +243,7 @@ export default function Community({setTrigger, feed, setFeed}) {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
+          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p>Reports: {el.reports}</p> : null}
           <p>{formatTime(el.created_at)}</p>
           <button onClick={() => window.scrollTo(0, 0)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>

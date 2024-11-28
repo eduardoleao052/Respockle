@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import api from "../api"
 import "../styles/Home.css"
 import { useNavigate } from "react-router-dom";
+import "../index.css"
 
 
 export default function DetailPost() {
@@ -10,10 +11,13 @@ export default function DetailPost() {
   const id = Number(isNaN(idRoot) ? idRoot.slice(0, idRoot.length - 1) : idRoot);
   const [post, setPost] = useState()
   const [User, setUser] = useState(null);
+  const [deletePopUp, setDeletePopUp] = useState(false)
+  const [reportPopUp, setReportPopUp] = useState(false)
   const [content, setContent] = useState("")
   const [comments, setComments] = useState([])
   const [communities, setCommunities] = useState(null);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
+  const [PostsReportedByUsers, setPostsReportedByUsers] = useState(null);
   const [PostsSavedByUsers, setPostsSavedByUsers] = useState(null);
   const [CommentsLikedByUsers, setCommentsLikedByUsers] = useState(null);
   const [commenting, setCommenting] = useState(false);
@@ -24,6 +28,7 @@ export default function DetailPost() {
     getCommunities();
     getPostsLikedByUser();
     getPostsSavedByUser();
+    getPostsReportedByUser();
     getCommentsLikedByUser();
     getComments();
   },[])
@@ -36,6 +41,18 @@ export default function DetailPost() {
     .then((data) => {
       if (data !== PostsLikedByUsers) {
         setPostsLikedByUsers(data)
+      }
+    }) 
+    .catch((error) => alert(error))
+  }
+
+  const getPostsReportedByUser = () => {
+    api
+    .get(`/api/posts/posts_reported_by_user/`)
+    .then((res) => res.data)
+    .then((data) => {
+      if (data !== PostsReportedByUsers) {
+        setPostsReportedByUsers(data)
       }
     }) 
     .catch((error) => alert(error))
@@ -124,6 +141,18 @@ export default function DetailPost() {
     }).catch((error) => alert(error))
   }
 
+  const handleReport = (id) => {
+    api.post(`/api/posts/report/${id}/`).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        getPost();
+        getPostsReportedByUser();
+        setReportPopUp(false);
+      } else {
+        alert("Failed to like post!")
+      }
+    }).catch((error) => alert(error))
+  }
+
   const handleSave = (el) => {
     api.post(`/api/posts/save/${el.id}/`).then((res) => {
       if (res.status === 201 || res.status === 200) {
@@ -178,10 +207,43 @@ export default function DetailPost() {
         <p>Content: {post.content}</p>
         <p>Author: {post.author_username}</p>
         <p>Likes: {post.likes}</p>
+        {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>Reports: {post.reports}</p> : null}
         <button onClick={() => navigateTo(`/community/${post.community}`)}>
         <p>Community: {communities ? communities.filter((community) => community.id === post.community)[0].name : null}</p>
         </button>        
-        {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button onClick={() => deletePost(post.id)}>Delete</button> : null}
+        {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
+        {deletePopUp ? 
+        <>
+          <div className='popup-div'>
+            <p>You sure you wanna delete?</p>
+            <button onClick={() => setDeletePopUp(false)}>Cancel</button>
+            <button onClick={() => deletePost(deletePopUp)}>
+              Confirm
+            </button>
+          </div>
+          <div className='popup-blackout'></div>
+        </> :
+        null
+        }
+        {!(post.author === User?.id) ? 
+        <button
+            style={{backgroundColor: getFields(PostsReportedByUsers, 'id').includes(post.id) ? 'red' : 'white'}} 
+            onClick={() => getFields(PostsReportedByUsers, 'id').includes(post.id) ? handleReport(post.id) : setReportPopUp(post.id)}>
+            Report
+        </button> : null}
+        {reportPopUp ? 
+        <>
+          <div className='popup-div'>
+            <p>You sure you wanna report?</p>
+            <button onClick={() => setReportPopUp(false)}>Cancel</button>
+            <button onClick={() => handleReport(reportPopUp)}>
+              Confirm
+            </button>
+          </div>
+          <div className='popup-blackout'></div>
+        </> :
+        null
+        }
         <button 
             style={{backgroundColor: getFields(PostsSavedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 
             onClick={() => handleSave(post)}>

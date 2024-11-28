@@ -20,8 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ["id", "title", "content", "created_at", "author", "author_username", "likes", "community"]
-        extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}}
+        fields = ["id", "title", "content", "created_at", "author", "author_username", "likes", "reports", "community"]
+        extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}, "reports" : {"read_only": True}}
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

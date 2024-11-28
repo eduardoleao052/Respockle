@@ -1,6 +1,7 @@
 import {useState,useEffect} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../api"
+import "../index.css"
 
 export default function Sidebar({trigger}) {
 
@@ -24,7 +25,6 @@ export default function Sidebar({trigger}) {
 
   const getOrigin = () => {
     const HERE = window.location.href;
-    console.log(HERE)
     if (HERE.split('/')[HERE.split('/').length - 1] === '') {
       setOrigin('home')
     } else if (HERE.split('/')[HERE.split('/').length - 1] === 'saved_posts') {
@@ -48,7 +48,6 @@ export default function Sidebar({trigger}) {
     .then((res) => res.data)
     .then((data) => {
       setUserCommunities(data);
-      console.log(data)
     })
     .catch((error) => alert(error))
   }
@@ -61,15 +60,13 @@ export default function Sidebar({trigger}) {
     api.post(`/api/community/create/`, {name,description}).then((res) => {
       if (res.status === 201 || res.status === 200) {
         console.log('created')
-        console.log({name,description})
-        navigateTo(0)
+        getCommunities(name)
       } else {
         alert("Failed to create post!")
       }
     }).catch((error) => alert(error))
     setName('');
     setDescription('');
-    //navigateTo(`/community/${XXXXXXXXX}`)
   }
   
   useEffect(() => {
@@ -84,23 +81,35 @@ export default function Sidebar({trigger}) {
     getOrigin();
   },[location])
 
-  const getCommunities = () => {
+  const getCommunities = (name) => {
     api
     .get("/api/communities/")
     .then((res) => res.data)
-    .then((data) => {setCommunities(data)})
+    .then((data) => {
+      setCommunities(data);
+      if (name) {
+        const communityId = data.filter((el) => el.name === name)[0].id
+        toggleCreateCommunityForm(false)
+        navigateTo(`/community/${communityId}`)
+      }
+    })
     .catch((error) => alert(error))
   }
 
   return (
     <div>
-      {createCommunityForm ? <div className='sidebar-create-community-pupup-div'>
-        <p>Name:</p>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
-        <p>Description:</p>
-        <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-        <button onClick={handleCreateCommunity}>Create!</button>
-      </div> : null}
+      {createCommunityForm ?
+      <> 
+        <div className='popup-div'>
+          <p>Name:</p>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+          <p>Description:</p>
+          <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
+          <button onClick={() => toggleCreateCommunityForm((c) => !c)}>Back!</button>
+          <button onClick={handleCreateCommunity}>Create!</button>
+        </div>
+        <div className='popup-blackout'></div>
+      </> : null}
       <h1>Sidebar</h1>
         <div style={{backgroundColor: origin === 'home' ? 'gray' : 'white'}}>
           <a href={`/`}>Home</a>

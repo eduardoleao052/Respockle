@@ -153,7 +153,7 @@ export default function Home({feed, setFeed}) {
       <h1>Home</h1>
       <div>
         <div>
-          <button onClick={() => toggleDropDown((d) => !d)}>Dropdown</button>
+          <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
           {dropDown ? 
           <div>
             <button 
@@ -180,6 +180,7 @@ export default function Home({feed, setFeed}) {
           <p>Content: {el.content}</p>
           <p>Author: {el.author_username}</p>
           <p>Likes: {el.likes}</p>
+          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p>Reports: {el.reports}</p> : null}
           <p>{formatTime(el.created_at)}</p>
           <button onClick={() => navigateTo(`/community/${el.community}`)}>
           <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>

@@ -111,6 +111,21 @@ def post_like(request, pk):
     return Response(serializer.data)
 
 @api_view(['POST'])
+def post_report(request, pk):
+    post = Post.objects.get(id=pk)
+    user = User.objects.get(id = request.user.id)
+    if user.reported_posts.contains(post):
+        post.reports -= 1
+        user.reported_posts.remove(post)
+    else:
+        post.reports += 1
+        user.reported_posts.add(post)
+    serializer = PostSerializer(instance=post, data={'content': post.content, 'title': post.title, 'community': post.community.id})
+    if serializer.is_valid():
+        serializer.save(author=post.author)
+    return Response(serializer.data)
+
+@api_view(['POST'])
 def post_save(request, pk):
     post = Post.objects.get(id=pk)
     user = User.objects.get(id = request.user.id)
@@ -141,6 +156,12 @@ def post_comment_like(request, pk):
 @api_view(['GET'])
 def posts_liked_by_user(request):
     posts = Post.objects.filter(liked_by_user = request.user.id)
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def posts_reported_by_user(request):
+    posts = Post.objects.filter(reported_by_user = request.user.id)
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
@@ -176,6 +197,13 @@ def community(request, pk):
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
+@api_view(['DELETE'])
+def community_delete(request, pk):
+	community = Community.objects.get(id=pk)
+	community.delete()
+
+	return Response('Item succsesfully deleted!')
+
 @api_view(['POST'])
 def community_create(request):
     data=request.data
@@ -189,6 +217,12 @@ def community_create(request):
 @api_view(['GET'])
 def community_by_likes(request, pk):
     posts = Post.objects.filter(community=pk).order_by('-likes')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def community_by_reports(request, pk):
+    posts = Post.objects.filter(community=pk).order_by('-reports')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
