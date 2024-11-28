@@ -65,7 +65,6 @@ export default function Sidebar({trigger}) {
     if (community_picture) {
         formData.append("community_picture", community_picture); // Only add if file is selected
     }
-    console.log(formData)
 
     api.post(`/api/community/create/`, formData).then((res) => {
       if (res.status === 201 || res.status === 200) {
