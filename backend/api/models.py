@@ -8,7 +8,7 @@ class Community(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='communities_created_by_user', default=1)
     author_username = models.TextField(default='')
     members = models.ManyToManyField(User, related_name="communities")
-    community_picture = models.ImageField(default='../assets/default_profile_picture.png', upload_to='community_pictures/', null=True, blank=True)
+    community_picture = models.ImageField(default='../assets/default_community_image.png', upload_to='community_pictures/', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -16,6 +16,7 @@ class Community(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
+    post_picture = models.ImageField(default='')
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     author_username = models.TextField(default='')
@@ -26,6 +27,7 @@ class Post(models.Model):
     reported_by_user = models.ManyToManyField(User, related_name="reported_posts")
     community = models.ForeignKey(Community, related_name="posts_in_community", on_delete=models.CASCADE)
     saved_by_user = models.ManyToManyField(User, related_name="saved_posts")
+    warning = models.TextField(default='')
 
     def __str__(self):
         return self.title
@@ -45,9 +47,10 @@ class Comment(models.Model):
     
 class Profile(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    created_at = models.DateTimeField(auto_now_add=True)
     is_health_professional = models.BooleanField(default=False)
     email = models.CharField(max_length=100, default='')
-    bio = models.TextField()
+    bio = models.TextField(default='')
     profile_picture = models.ImageField(default='../assets/default_profile_picture.png')
 
     def __str__(self):

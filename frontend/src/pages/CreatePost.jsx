@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function CreatePost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [postPicture, setPostPicture] = useState('');
   const [community, setCommunity] = useState('')
   const [User, setUser] = useState(null);
   const [communities, setCommunities] = useState([]);
@@ -44,10 +45,18 @@ export default function CreatePost() {
     if (document.getElementById("community").value === "") {
         return
     }
-    api.post(`/api/posts/create/`, {content,title,community}).then((res) => {
+
+    let formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("community", community);
+    if (postPicture) {
+        formData.append("post_picture", postPicture); // Only add if file is selected
+    }
+
+    api.post(`/api/posts/create/`, formData).then((res) => {
       if (res.status === 201 || res.status === 200) {
         console.log('posted')
-        console.log({content,title,community})
       } else {
         alert("Failed to create post!")
       }
@@ -55,6 +64,7 @@ export default function CreatePost() {
     setTitle('');
     setContent('');
     setCommunity(null);
+    setPostPicture(null);
     document.getElementById("community").value = "";
     navigateTo(`/community/${community}`)
   }
@@ -68,6 +78,8 @@ export default function CreatePost() {
         <input type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>
         <br />
         <label htmlFor="content">Content</label>
+        <br />
+        <input type="file" accept="image/*" onChange={(e) => setPostPicture(e.target.files[0])}/>
         <br />
         <textarea id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
         <br />

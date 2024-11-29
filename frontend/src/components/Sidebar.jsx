@@ -150,7 +150,8 @@ export default function Sidebar({trigger}) {
           key={el.id} 
           style={{backgroundColor: el.id === origin ? '#e1e1e1' : 'white'}} 
           onClick={() => navigateTo(`/community/${el.id}`)}>
-          {el.name}
+            <img className="sidebar-community-image" src={`${import.meta.env.VITE_API_URL}${el.community_picture}`} alt="community image" />
+            <p>{el.name}</p>
         </button>
       )}
     </div>

@@ -26,7 +26,16 @@ export default function Form({ route, method, url }) {
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
                 navigateTo(url, { replace: true })
             } else if (method === "register") {
-                navigateTo("/login")
+                const loginRes = await api.post("/api/token/", { username, password });
+        
+                localStorage.setItem(ACCESS_TOKEN, loginRes.data.access);
+                localStorage.setItem(REFRESH_TOKEN, loginRes.data.refresh);
+
+                await api.post(`/api/user/profile/create/${res.data.id}/`, {})
+                    .then((profileRes) => console.log(profileRes.data))
+                    .catch((error) => console.error(error));
+
+                navigateTo("/")
             }
         } catch(error) {
             alert(error);

@@ -1,13 +1,17 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api"
-import "../styles/Home.css"
+import "../index.css"
 import { useNavigate, useLocation } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 
 export default function Profile({feed, setFeed}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);
+  const [bio, setBio] = useState('');
+  const [profilePicture, setProfilePicture] = useState('');
+  const [popUp, setPopUp] = useState(false);
+  const [profile, setProfile] = useState(null);
   const [dropDown, toggleDropDown] = useState(false);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
   const [communities, setCommunities] = useState(null);
@@ -19,6 +23,7 @@ export default function Profile({feed, setFeed}) {
 
   useEffect(() => {
     getUsers();
+    getProfile(userId);
     getLikesByUser();
     getCommunities();
     if (feed==='created_at') {
@@ -108,6 +113,14 @@ export default function Profile({feed, setFeed}) {
     .catch((error) => alert(error))
   }
 
+  const getProfile = (id) => {
+    api
+    .get(`/api/user/profile/${id}/`)
+    .then((res) => res.data)
+    .then((data) => {setProfile(data)})
+    .catch((error) => alert(error))
+  }
+
   const getCommunities = () => {
     api
     .get("/api/communities/")
@@ -139,10 +152,52 @@ export default function Profile({feed, setFeed}) {
     }).catch((error) => alert(error))
   }
 
+  const handleUpdateProfile = () => {
+
+    let formData = new FormData();
+    formData.append("bio", bio);
+    if (profilePicture) {
+        formData.append("profile_picture", profilePicture); 
+    }
+
+    api.post(`/api/user/profile/update/${User.id}/`, formData).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        console.log('posted')
+        getProfile(userId);
+        setPopUp(false);
+      } else {
+        alert("Failed to create post!")
+      }
+    }).catch((error) => alert(error))
+    setBio('');
+    setProfilePicture(null);
+  }
+
   return (
     <div className='main'>
+      <div className='main-profile-profile-header'>
+        <img className='main-profile-profile-picture' src={`${import.meta.env.VITE_API_URL}${profile ? profile.profile_picture : 'assets/default_profile_picture.png'}`} alt="profile_picture" />
+        <div className='main-profile-profile-header-div'>
+          <p>{User ? User.username : '...'}</p>
+          <p>Joined {profile ? formatTime(profile.created_at) : '...'} ago</p>
+        </div>
+      </div>
+      <p>{profile ? profile.bio : '...'}</p>
       <div>
-        
+        <button className='main-profile-update-button' onClick={(t) => setPopUp(true)}>Update Profile</button>
+        {popUp ?
+        <> 
+          <div className='popup-div'>
+            <p>Bio:</p>
+            <textarea name="description" value={bio} onChange={(e) => setBio(e.target.value)}></textarea>
+            <p>Profile picture:</p>
+            <input type="file" accept="image/*" onChange={(e) => setProfilePicture(e.target.files[0])}/>
+            <button onClick={() => setPopUp(false)}>Cancel</button>
+            <button onClick={handleUpdateProfile}>Submit</button>
+          </div>
+          <div className='popup-blackout'></div>
+        </>
+         : null}
       </div>
       <h2>User's Posts</h2>
       <div>

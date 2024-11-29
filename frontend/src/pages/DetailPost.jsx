@@ -33,6 +33,22 @@ export default function DetailPost() {
     getComments();
   },[])
 
+  function formatTime(time) {
+    let timeSinceCreation = (Date.now() - new Date(time).getTime())/1000;
+    let days = Math.floor(timeSinceCreation/84600)
+    let hours = Math.floor((timeSinceCreation - days*84600)/3600)
+    let minutes = Math.floor((timeSinceCreation - 3600*hours - days*84600)/60)
+    let seconds = Math.floor((timeSinceCreation - 3600*hours - 60*minutes - days*84600))
+    if (days >= 1) {
+      return `${days} days`;
+    } else if (hours >= 1) {
+      return `${hours} h`
+    } else if (minutes >= 1) {
+      return `${minutes} m`
+    } else if (seconds >= 1) {
+      return `${seconds} s`
+    } else return 'now'
+  }
 
   const getPostsLikedByUser = () => {
     api
@@ -203,14 +219,21 @@ export default function DetailPost() {
     post ? 
       <div className="post-detail" key={id}>
         <button onClick={() => navigateTo(-1)}>Back</button>
-        <p><b>Title: {post.title}</b></p>
-        <p>Content: {post.content}</p>
-        <p>Author: {post.author_username}</p>
-        <p>Likes: {post.likes}</p>
-        {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>Reports: {post.reports}</p> : null}
-        <button onClick={() => navigateTo(`/community/${post.community}`)}>
-        <p>Community: {communities ? communities.filter((community) => community.id === post.community)[0].name : null}</p>
-        </button>        
+        <div className="main-feed-post-header">
+        <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === post.community)[0]?.community_picture ? communities.filter((c) => c.id === post.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />          
+        <div className="main-feed-post-header-info">
+          <button className='main-feed-post-url bold' onClick={() => navigateTo(`/community/${post.community}`)}>
+            {communities ? communities.filter((community) => community.id === post.community)[0].name : null}
+          </button>  
+          <button className='main-feed-post-url' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
+            {post.author_username}
+          </button>
+          </div>
+        </div>
+        <p className="main-feed-post-body-title">Title: {post.title}</p>
+        <p className="main-feed-post-body-content">Content: {post.content}</p>
+        {post.post_picture ? <img src={`${import.meta.env.VITE_API_URL}${post.post_picture}`} alt="error loading post image"/> : null}
+        {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>Reports: {post.reports}</p> : null}      
         {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
         {deletePopUp ? 
         <>
@@ -225,12 +248,6 @@ export default function DetailPost() {
         </> :
         null
         }
-        {!(post.author === User?.id) ? 
-        <button
-            style={{backgroundColor: getFields(PostsReportedByUsers, 'id').includes(post.id) ? 'red' : 'white'}} 
-            onClick={() => getFields(PostsReportedByUsers, 'id').includes(post.id) ? handleReport(post.id) : setReportPopUp(post.id)}>
-            Report
-        </button> : null}
         {reportPopUp ? 
         <>
           <div className='popup-div'>
@@ -244,25 +261,50 @@ export default function DetailPost() {
         </> :
         null
         }
-        <button 
-            style={{backgroundColor: getFields(PostsSavedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 
-            onClick={() => handleSave(post)}>
-            Save
-        </button>
-        <button
-            style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(post.id) ? 'blue' : 'white'}} 
-            onClick={() => handleLike(post)}>
-            Like
-        </button>
+        <div className="main-feed-post-body-footer">
+          <div className="main-feed-post-body-footer-left">
+            <button
+              className='main-feed-post-body-likes'
+              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(post.id) ? '#0571d3' : '#a1a1a1'}} 
+              onClick={() => {handleLike(post)}}>
+              {post.likes} likes
+            </button>
+            <button 
+              className='main-feed-post-body-likes'
+              style={{backgroundColor: getFields(PostsSavedByUsers, 'id').includes(post.id) ? '#0571d3' : '#a1a1a1'}} 
+              onClick={() => handleSave(post)}>
+              Save
+            </button>
+            <button className="main-feed-post-body-likes"
+              style={{backgroundColor: commenting ? '#0571d3' : '#a1a1a1'}}  
+              onClick={() => toggleCommenting()}>Comment
+            </button>
+            {!(post.author === User?.id) ? 
+            <button className="main-feed-post-body-likes"
+                style={{backgroundColor: getFields(PostsReportedByUsers, 'id').includes(post.id) ? '#9c1010' : '#a1a1a1'}} 
+                onClick={() => {
+                  if (false) {
+                    console.log('uau')
+                  } else {
+                    getFields(PostsReportedByUsers, 'id').includes(post.id) ?
+                    handleReport(post.id) : 
+                    setReportPopUp(post.id)
+                  }
+                }}>
+                Report
+            </button> : null}
+            </div>
+            <p className="main-feed-post-body-time">{formatTime(post.created_at)}</p>
+          </div>
         { commenting ? 
         <div>
           <form action=''>
           <textarea onChange={(e) => handleChangeComment(e)} value={content} id="comment-content-form"></textarea>
           </form>
-          <button onClick={createComment}>Comment</button>
+          <button className="main-feed-post-body-comment" onClick={createComment}>Submit</button>
         </div>
         :
-        <button onClick={() => toggleCommenting()}>Comment</button>
+        null
         }
         <div>
         {comments.map((el,id) => 

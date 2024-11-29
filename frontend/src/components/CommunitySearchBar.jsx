@@ -11,7 +11,7 @@ export default function CommunitySearchbar({ onSearch, onClick }) {
 
   return (
     <input
-      id="community_searchbar"
+      id="header-searchbar"
       type="text"
       placeholder="Search..."
       value={query}

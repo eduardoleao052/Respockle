@@ -27,7 +27,7 @@ export default function Header() {
 
     useEffect(() => {
       const enterListener = addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === 'Escape') {
           setShowDropdown(false)
         }
       })
@@ -100,7 +100,7 @@ export default function Header() {
                       onClick={() => isLoggedIn()}>
                       <img 
                         className="header-profile-picture" 
-                        src={`${import.meta.env.VITE_API_URL}${profile.profile_picture}`}>
+                        src={`${import.meta.env.VITE_API_URL}${profile ? profile.profile_picture : 'assets/default_profile_picture.png'}`}>
                       </img>
                       <p>
                         {user?.username}

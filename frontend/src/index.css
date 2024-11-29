@@ -13,6 +13,28 @@
     margin-left: 20%;
 }
 
+#main-searchbar {
+    width: 325px;
+    background-color: rgb(237, 237, 237);
+    border: 1px solid rgb(189, 189, 189);
+    padding: 10px 20px;
+    border-radius: 15px;
+}
+
+#header-searchbar {
+    width: 325px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(189, 189, 189);
+    padding: 10px 20px;
+    border-radius: 15px;
+}
+
+#header-searchbar:focus {
+    outline: none;
+    border: 1px solid rgb(0, 174, 255);
+    background-color: rgb(248, 248, 248);
+}
+
 .main-header {
     height: fit-content;
     padding: 15px;
@@ -28,7 +50,7 @@
 .main-header-sortfeed {
     background-color: gray;
     color: white;
-    padding: 3px 6px;
+    padding: 6px 10px;
     border-radius: 15px;
 }
 
@@ -82,8 +104,9 @@
     padding: 10px 20px;
     border: 1px solid rgba(0, 0, 0, 0.102);
     box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.048);
-    width: 80%;
-    margin: auto;
+    width: 70%;
+    margin-left: 3%;
+    margin-right: 27%;
     margin-bottom: 25px;
     margin-top: 25px;
     cursor: pointer;
@@ -98,7 +121,7 @@
     gap: 10px;
 }
 
-.main-feed-post-header-image {
+.main-feed-post-header-image, .sidebar-community-image {
     width: 40px;
     height: 40px;
     object-fit: cover;
@@ -136,14 +159,26 @@
 }
 .main-feed-post-body-likes {
     color: white;
-    padding: 3px 6px;
+    padding: 6px 10px;
     border-radius: 15px;
 }
 .main-feed-post-body-likes:hover {
-    color: rgb(212, 212, 212);
-    opacity: 0.8;
+    opacity: 0.93;
 }
 
+.main-feed-post-body-footer-left {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.main-feed-post-body-comment {
+    background-color: #a1a1a1;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+}
 
 button {
     border: none;
@@ -154,12 +189,22 @@ button:hover {
 }
 
 .sidebar-community-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     display: block;
     padding: 10px;
     width: 96%;
     cursor: pointer;
     border-radius: 5px;
     margin: 2%;
+}
+
+.sidebar-community-button p {
+    position: relative;
+    display: inline;
+    bottom: 13px;
+    left: 10px;
 }
 
 
@@ -212,6 +257,33 @@ button:hover {
     object-fit: cover;
     border-radius: 50%;
 }
+.main-profile-profile-picture {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: inline;
+}
+.main-profile-profile-header {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+.main-profile-profile-header-div {
+    display: flex;
+    flex-direction: column;
+}
+.main-profile-profile-header p {
+    display: inline;
+}
+.main-profile-update-button {
+    margin: 20px 0px;
+    padding: 10px 20px;
+    background-color: #a1a1a1;
+    color: white;
+    border-radius: 400px;
+}
+
 .header-profile-a {
     display: flex;
     flex-direction: row;
@@ -245,7 +317,7 @@ button:hover {
 }
 
 .post-detail {
-    width: 80%;
+    width: 65%;
     margin-top: 140px;
     margin-left: 20%;
 }

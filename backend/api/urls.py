@@ -31,6 +31,7 @@ urlpatterns = [
     path('community/users_in_community/<int:pk>/', views.users_in_community, name="users-in-community"),
     path('community/handle_membership/<int:pk>/', views.handle_membership, name="handle-membership"),
     path('user/communities/', views.user_communities, name="user-communities"),
-    path('user/profile/<int:pk>/', views.user_profile, name="user-profile")
+    path('user/profile/<int:pk>/', views.user_profile, name="user-profile"),
+    path('user/profile/update/<int:pk>/', views.profile_update, name="profile-update")
 
 ]

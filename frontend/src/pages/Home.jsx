@@ -177,15 +177,15 @@ export default function Home({feed, setFeed}) {
       {filteredPosts.map((el,id) => 
         <div className="post-div" onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })} key={id}>
           <div className="main-feed-post-header">
-            <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === el.community)[0]?.community_picture ? communities.filter((c) => c.id === el.community)[0]?.community_picture : 'assets/default_profile_picture.png': 'assets/default_profile_picture.png'}`} alt="" />
+            <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === el.community)[0]?.community_picture ? communities.filter((c) => c.id === el.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />
             <div className="main-feed-post-header-info">
-              <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : null}</button>
+              <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : '...'}</button>
               <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}</button>
             </div>
           </div>
           <p className="main-feed-post-body-title">{el.title}</p>
           <p className="main-feed-post-body-content">{el.content}</p>
-          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p className="main-feed-post-body-content">Reports: {el.reports}</p> : null}
+          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p className="main-feed-post-body-content">Reports: {el.reports}</p> : '...'}
           <div className="main-feed-post-body-footer">
             <button
               className='main-feed-post-body-likes'

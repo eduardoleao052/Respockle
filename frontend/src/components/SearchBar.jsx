@@ -11,6 +11,7 @@ export default function SearchBar({ onSearch, onClick }) {
 
   return (
     <input
+      id="main-searchbar"
       type="text"
       placeholder="Search..."
       value={query}

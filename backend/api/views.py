@@ -62,12 +62,24 @@ def username(request, pk):
 
 @api_view(['POST'])
 def post_create(request):
-    data=request.data
+    data=request.data.copy()
     data["author_username"] = request.user.username
     serializer = PostSerializer(data=data)
+    print("AAA",serializer)
+    print("BBB",serializer.is_valid())
     if serializer.is_valid():
         serializer.save(author=request.user)
     return Response(serializer.data)
+
+def community_create(request):
+    data = request.data.copy()
+    data["author_username"] = request.user.username
+    data["members"] = request.user.id
+    serializer = CommunitySerializer(data=data)
+    if serializer.is_valid():
+        serializer.save(author=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def post_create_comment(request, pk):
@@ -257,6 +269,25 @@ def handle_membership(request, pk):
     serializer = CommunitySerializer(instance=community, data={'name': community.name, 'description': community.description})
     if serializer.is_valid():
         serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def profile_create(request, pk):
+    data=request.data
+    user=User.objects.get(id=pk)
+    serializer = ProfileSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save(user_id=user)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def profile_update(request, pk):
+    data=request.data
+    user=User.objects.get(id=pk)
+    profile=Profile.objects.get(user_id=user.id)
+    serializer = ProfileSerializer(profile, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save(user_id=user)
     return Response(serializer.data)
 
 class CreateUserView(generics.CreateAPIView):
