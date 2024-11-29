@@ -11,6 +11,7 @@ export default function Header() {
     const [user, setUser] = useState(null);
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [showDropdown, setShowDropdown] = useState([false]);
     const [profile, setProfile] = useState('');
     const navigateTo = useNavigate()
 
@@ -24,6 +25,22 @@ export default function Header() {
         }
     },[token])
 
+    useEffect(() => {
+      const enterListener = addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          setShowDropdown(false)
+        }
+      })
+      return removeEventListener('keydown',enterListener);
+    }, [])
+
+    useEffect(() => {
+      const clickListener = addEventListener('click', (e) => {
+        setShowDropdown(false)
+      })
+      return removeEventListener('click',clickListener);
+    }, [])
+
     const handlePullData = () => {
         api
         .get("/api/communities/")
@@ -33,6 +50,7 @@ export default function Header() {
     }
     
     const handleSearch = (query) => {
+      setShowDropdown(true)
       if (query === "") {
         setFilteredData(data);
       } else {
@@ -73,7 +91,7 @@ export default function Header() {
                     <a href="/logout" onClick={() => isLoggedIn()}>Logout</a>
                     <div>
                         <CommunitySearchBar onClick={handlePullData} onSearch={handleSearch} />
-                        {document.activeElement === document.getElementById('community_searchbar') ? <ResultsList results={filteredData} /> : null}
+                        {(document.activeElement === document.getElementById('community_searchbar') && showDropdown) ? <ResultsList results={filteredData} /> : null}
                     </div>
                     <button onClick={() => {navigateTo('/create_post')}}>Create Post</button>
                     <a 

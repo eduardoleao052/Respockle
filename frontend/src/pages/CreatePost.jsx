@@ -60,7 +60,7 @@ export default function CreatePost() {
   }
 
   return (
-    <div>
+    <div className='main'>
       <h2>Create Post</h2>
       <form>
         <label htmlFor="title">Title</label>

@@ -201,7 +201,7 @@ export default function DetailPost() {
 
   return (
     post ? 
-      <div className="post-div" key={id}>
+      <div className="post-detail" key={id}>
         <button onClick={() => navigateTo(-1)}>Back</button>
         <p><b>Title: {post.title}</b></p>
         <p>Content: {post.content}</p>

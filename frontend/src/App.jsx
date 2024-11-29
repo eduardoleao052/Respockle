@@ -12,7 +12,7 @@ import DetailPost from "./pages/DetailPost"
 import Community from "./pages/Community"
 import SavedPosts from "./pages/SavedPosts"
 import Profile from "./pages/Profile"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 function Logout() {
   localStorage.clear()
@@ -27,6 +27,7 @@ function RegisterAndLogout() {
 function App() {
   const [trigger, setTrigger] = useState(false);
   const [feed, setFeed] = useState('created_at')
+
   return (
     <>
       <BrowserRouter>
