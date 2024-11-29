@@ -140,7 +140,7 @@ export default function Profile({feed, setFeed}) {
   }
 
   return (
-    <div>
+    <div className='main'>
       <div>
         
       </div>

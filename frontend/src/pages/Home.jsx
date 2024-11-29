@@ -25,7 +25,7 @@ export default function Home({feed, setFeed}) {
     getUsers();
     getLikesByUser();
     getCommunities();
-  },[])
+  },[location])
 
   const handleSearch = (query) => {
     if (query === "") {
@@ -149,27 +149,29 @@ export default function Home({feed, setFeed}) {
   }
 
   return (
-    <div>
-      <h1>Home</h1>
-      <div>
+    <div className='main'>
+      <div className='main-header'>
+        <h1>Home</h1>
         <div>
-          <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
-          {dropDown ? 
           <div>
-            <button 
-              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
-              onClick={() => {getPostsByLikes(); setFeed('likes')}}>
-              Most Popular
+            <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+            {dropDown ? 
+            <div>
+              <button 
+                style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+                onClick={() => {getPostsByLikes(); setFeed('likes')}}>
+                Most Popular
+                </button>
+              <button 
+                style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+                onClick={() => {getPosts(); setFeed('created_at')}}>
+                Recent
               </button>
-            <button 
-              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-              onClick={() => {getPosts(); setFeed('created_at')}}>
-              Recent
-            </button>
-          </div> : null}
-        </div>
-        <div style={{ padding: '20px' }}>
-            <SearchBar onSearch={handleSearch} />
+            </div> : null}
+          </div>
+          <div style={{ padding: '20px' }}>
+              <SearchBar onSearch={handleSearch} />
+          </div>
         </div>
       </div>
       {filteredPosts.map((el,id) => 

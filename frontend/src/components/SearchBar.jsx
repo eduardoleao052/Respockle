@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "../index.css"
 
 export default function SearchBar({ onSearch, onClick }) {
   const [query, setQuery] = useState("");
@@ -15,6 +16,7 @@ export default function SearchBar({ onSearch, onClick }) {
       value={query}
       onChange={handleInputChange}
       onClick={onClick}
+      autoComplete="off"
     />
   );
 }

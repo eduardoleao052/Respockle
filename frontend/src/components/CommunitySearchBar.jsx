@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import "../index.css"
 
-export default function SearchBar({ onSearch, onClick }) {
+export default function CommunitySearchbar({ onSearch, onClick }) {
   const [query, setQuery] = useState("");
 
   const handleInputChange = (e) => {
@@ -16,6 +17,7 @@ export default function SearchBar({ onSearch, onClick }) {
       value={query}
       onChange={handleInputChange}
       onClick={onClick}
+      autoComplete="off"
     />
   );
 }

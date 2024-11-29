@@ -4,6 +4,7 @@ import { ACCESS_TOKEN } from '../constants'
 import '../index.css'
 import CommunitySearchBar from './CommunitySearchBar'
 import ResultsList from './ResultsList'
+import { useNavigate } from 'react-router-dom'
 
 export default function Header() {
     let [token, setToken] = useState(null);
@@ -11,6 +12,7 @@ export default function Header() {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [profile, setProfile] = useState('');
+    const navigateTo = useNavigate()
 
     useEffect(() => {
         setInterval(() => {
@@ -63,20 +65,29 @@ export default function Header() {
     }
 
   return (
-    <>
-        <h1 className='header-title'>Dalilah the Crafty's Wonderful App for Diabeticals</h1>
         <nav className='header-navbar'>
+          <h1 className='header-title'>Dalilah the Crafty's Wonderful App for Diabeticals</h1>
             {
                 token ? 
                 <div className='header-navbar-authfalse'>
                     <a href="/logout" onClick={() => isLoggedIn()}>Logout</a>
-                    <div style={{ padding: '20px' }}>
+                    <div>
                         <CommunitySearchBar onClick={handlePullData} onSearch={handleSearch} />
                         {document.activeElement === document.getElementById('community_searchbar') ? <ResultsList results={filteredData} /> : null}
                     </div>
-                    <a href="/create_post">Create Post</a>    
-                    <br />
-                    <a className="header-profile-a" href={`/profile/${user?.id}`}  onClick={() => isLoggedIn()}><p>{user?.username}</p><img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}${profile.profile_picture}`}></img></a>                  
+                    <button onClick={() => {navigateTo('/create_post')}}>Create Post</button>
+                    <a 
+                      className="header-profile-a" 
+                      href={`/profile/${user?.id}`}  
+                      onClick={() => isLoggedIn()}>
+                      <img 
+                        className="header-profile-picture" 
+                        src={`${import.meta.env.VITE_API_URL}${profile.profile_picture}`}>
+                      </img>
+                      <p>
+                        {user?.username}
+                      </p>
+                    </a>                  
                 </div>
                 : 
                 <div className='header-navbar-authtrue'>
@@ -86,6 +97,5 @@ export default function Header() {
                 </div>
             }
         </nav>
-    </>
   )
 }

@@ -24,7 +24,7 @@ export default function SavedPosts({feed, setFeed}) {
     } else {
       getSavedPostsByLikes();
     }
-  },[])
+  },[location])
 
   function formatTime(time) {
     let timeSinceCreation = (Date.now() - new Date(time).getTime())/1000;
@@ -145,27 +145,29 @@ export default function SavedPosts({feed, setFeed}) {
   }
 
   return (
-    <div>
-      <h2>Saved Posts</h2>
-      <div>
+    <div className='main'>
+      <div className='main-header'>
+        <h1>Saved Posts</h1>
         <div>
-          <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
-          {dropDown ? 
           <div>
-            <button 
-              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
-              onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
-              Most Popular
+            <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+            {dropDown ? 
+            <div>
+              <button 
+                style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+                onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
+                Most Popular
+                </button>
+              <button 
+                style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+                onClick={() => {getSavedPosts(); setFeed('created_at')}}>
+                Recent
               </button>
-            <button 
-              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-              onClick={() => {getSavedPosts(); setFeed('created_at')}}>
-              Recent
-            </button>
-          </div> : null}
-        </div>
-        <div style={{ padding: '20px' }}>
-          <SearchBar onSearch={handleSearch} />
+            </div> : null}
+          </div>
+          <div style={{ padding: '20px' }}>
+            <SearchBar onSearch={handleSearch} />
+          </div>
         </div>
       </div>
       {filteredPosts.map((el,id) => 

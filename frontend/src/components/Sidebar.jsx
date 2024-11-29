@@ -91,6 +91,10 @@ export default function Sidebar({trigger}) {
     getOrigin();
   },[location])
 
+  useEffect(() => {
+    console.log(origin)
+  },[origin])
+
   const getCommunities = (name) => {
     api
     .get("/api/communities/")
@@ -107,7 +111,7 @@ export default function Sidebar({trigger}) {
   }
 
   return (
-    <div>
+    <div className='sidebar'>
       {createCommunityForm ?
       <> 
         <div className='popup-div'>
@@ -121,21 +125,33 @@ export default function Sidebar({trigger}) {
         </div>
         <div className='popup-blackout'></div>
       </> : null}
-      <h1>Sidebar</h1>
-        <div style={{backgroundColor: origin === 'home' ? 'gray' : 'white'}}>
-          <a href={`/`}>Home</a>
-        </div>
-        <div style={{backgroundColor: origin === 'saved_posts' ? 'gray' : 'white'}}>
-          <a href={`/saved_posts`}>Saved</a>
-        </div>
-        <br />
-        <div style={{backgroundColor: origin === 'create_community' ? 'gray' : 'white'}}>
-          <button onClick={() => toggleCreateCommunityForm(!createCommunityForm)}>[+]</button>
-        </div>
+      <h3>Feeds</h3>
+        <button 
+          className='sidebar-community-button' 
+          style={{backgroundColor: origin === 'home' ? '#e1e1e1' : 'white'}} 
+          onClick={() => {navigateTo(`/`)}}>
+          Home
+        </button>
+        <button 
+          className='sidebar-community-button' 
+          style={{backgroundColor: origin === 'saved_posts' ? '#e1e1e1' : 'white'}} 
+          onClick={() => navigateTo(`/saved_posts`)}>
+          Saved
+        </button>
+        <div className='horizontal-line'></div>
+        <button 
+          style={{backgroundColor: createCommunityForm ? '#e1e1e1' : 'white'}} 
+          className='sidebar-community-button' onClick={() => toggleCreateCommunityForm(!createCommunityForm)}>
+          [+]
+        </button>
       {userCommunities.map((el,id)=>
-        <div key={el.id} style={{backgroundColor: el.id === origin ? 'gray' : 'white'}}>
-          <button onClick={() => navigateTo(`/community/${el.id}`)}>{el.name}</button>
-        </div>
+        <button 
+          className='sidebar-community-button'
+          key={el.id} 
+          style={{backgroundColor: el.id === origin ? '#e1e1e1' : 'white'}} 
+          onClick={() => navigateTo(`/community/${el.id}`)}>
+          {el.name}
+        </button>
       )}
     </div>
   )

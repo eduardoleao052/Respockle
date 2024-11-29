@@ -189,52 +189,54 @@ export default function Community({setTrigger, feed, setFeed}) {
   }
 
   return (
-    <div>
-      <img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === communityId)[0]?.community_picture ? communities.filter((c) => c.id === communityId)[0]?.community_picture : 'assets/default_profile_picture.png': 'assets/default_profile_picture.png'}`} alt="" />
-      <h2>{communities ? communities.filter((c) => c.id === communityId)[0]?.name : null}</h2>
-      <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.description : null}</h4>
-      <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.members.length : null}</h4>
-      {(communities?.filter((c) => c.id === communityId)[0]?.author === User?.id) ? 
-      <button onClick={() => setDeletePopUp(true)}>Delete Community</button> :
-      <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>}
-      {deletePopUp ?
-        <>
-          <div className='popup-div'>
-            <p>You sure you wanna delete?</p>
-            <button onClick={() => setDeletePopUp(false)}>Cancel</button>
-            <button onClick={() => deleteCommunity()}>
-              Confirm
-            </button>
-          </div>
-          <div className='popup-blackout'></div>
-        </> :
-        null
-      }
-      <div>
-        <div>
-          <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
-          {dropDown ? 
-          <div>
-            <button 
-              style={{backgroundColor: feed === 'likes' ? 'blue' : 'white'}}
-              onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
-              Most Popular
+    <div className='main'>
+      <div className='main-header'>
+        <img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === communityId)[0]?.community_picture ? communities.filter((c) => c.id === communityId)[0]?.community_picture : 'assets/default_profile_picture.png': 'assets/default_profile_picture.png'}`} alt="" />
+        <h1>{communities ? communities.filter((c) => c.id === communityId)[0]?.name : null}<span className='coooooo'>&#9830;</span></h1>
+        <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.description : null}</h4>
+        <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.members.length : null}</h4>
+        {(communities?.filter((c) => c.id === communityId)[0]?.author === User?.id) ? 
+        <button onClick={() => setDeletePopUp(true)}>Delete Community</button> :
+        <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>}
+        {deletePopUp ?
+          <>
+            <div className='popup-div'>
+              <p>You sure you wanna delete?</p>
+              <button onClick={() => setDeletePopUp(false)}>Cancel</button>
+              <button onClick={() => deleteCommunity()}>
+                Confirm
               </button>
-            <button 
-              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-              onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
-              Recent
-            </button>
-            {communities?.filter((c) => c.id === communityId)[0].author === User?.id ?
-            <button 
-              style={{backgroundColor: feed === 'reports' ? 'blue' : 'white'}}
-              onClick={() => {getCommunityPostsByReports(); setFeed('reports')}}>
-              Controversial
-            </button> : null}
-          </div> : null}
-        </div>
-        <div style={{ padding: '20px' }}>
-          <SearchBar onSearch={handleSearch} />
+            </div>
+            <div className='popup-blackout'></div>
+          </> :
+          null
+        }
+        <div>
+          <div>
+            <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+            {dropDown ? 
+            <div>
+              <button 
+                style={{backgroundColor: feed === 'likes' ? 'blue' : 'white'}}
+                onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
+                Most Popular
+                </button>
+              <button 
+                style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+                onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
+                Recent
+              </button>
+              {communities?.filter((c) => c.id === communityId)[0].author === User?.id ?
+              <button 
+                style={{backgroundColor: feed === 'reports' ? 'blue' : 'white'}}
+                onClick={() => {getCommunityPostsByReports(); setFeed('reports')}}>
+                Controversial
+              </button> : null}
+            </div> : null}
+          </div>
+          <div style={{ padding: '20px' }}>
+            <SearchBar onSearch={handleSearch} />
+          </div>
         </div>
       </div>
       {filteredPosts.map((el,id) => 

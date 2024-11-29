@@ -6,15 +6,13 @@ function ResultsList({ results }) {
     const navigateTo = useNavigate()
 
     return (
-      <ul>
+      <div className="header-searchbar-recomendations">
         {results.map((item, index) => (
           <button onClick={() => navigateTo(`community/${item.id}`)} key={index}>
-            <li key={index}>
-              {item.name}
-            </li>
+            {item.name}
           </button>
         ))}
-      </ul>
+      </div>
     );
   }
   
