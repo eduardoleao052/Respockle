@@ -20,6 +20,7 @@ urlpatterns = [
     path('posts/delete/<int:pk>/', views.post_delete, name="post-delete"),
     path('posts/update/', views.post_update, name="post-update"),
     path('posts/user/', views.current_user, name="current-user"),
+    path('posts/all_profiles/', views.all_profiles, name="all-profiles"),
     path('posts/user/username/<int:pk>/', views.username, name="username"),
     path('posts/posts_liked_by_user/', views.posts_liked_by_user, name="posts-liked-by-user"),
     path('posts/posts_reported_by_user/', views.posts_reported_by_user, name="posts-reported-by-user"),

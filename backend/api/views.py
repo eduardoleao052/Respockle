@@ -312,6 +312,13 @@ def profile_update(request, pk):
         serializer.save(user_id=user)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def all_profiles(request):
+    profile = Profile.objects.all()
+    serializer = ProfileSerializer(profile, many=True)
+    return Response(serializer.data)
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

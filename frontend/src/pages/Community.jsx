@@ -10,6 +10,7 @@ export default function Community({setTrigger, feed, setFeed}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);
   const [dropDown, toggleDropDown] = useState(false);
+  const [profiles, setProfiles] = useState  (null);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
   const [usersInCommunity, setUsersInCommunity] = useState(null);
   const [communities, setCommunities] = useState(null);
@@ -22,6 +23,7 @@ export default function Community({setTrigger, feed, setFeed}) {
   useEffect(() => {
     getUsers();
     getLikesByUser();
+    getProfiles();
     getCommunities();
     setTrigger((t) => !t)
     if (feed==='created_at') {
@@ -113,6 +115,13 @@ export default function Community({setTrigger, feed, setFeed}) {
     .catch((error) => alert(error))
   }
 
+  const getProfiles = () => {
+    api
+    .get("/api/posts/all_profiles/")
+    .then((res) => res.data)
+    .then((data) => {setProfiles(data)})
+    .catch((error) => alert(error))
+  }
 
   const getUsers = () => {
     api
@@ -241,6 +250,13 @@ export default function Community({setTrigger, feed, setFeed}) {
       </div>
       {filteredPosts.map((el,id) => 
         <div className="post-div" key={id}>
+          <img 
+          className="main-feed-post-header-image"
+          src={`${import.meta.env.VITE_API_URL}${profiles ? 
+            profiles.filter((c) => c.user_id === el.author)[0]?.profile_picture ? 
+            profiles.filter((c) => c.user_id === el.author)[0].profile_picture : 
+            'assets/default_profile_picture.png': 
+            'assets/default_profile_picture.png'}`}/>
           <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
             Title: {el.title}
           </button>
