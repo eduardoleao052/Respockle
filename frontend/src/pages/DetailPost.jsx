@@ -14,6 +14,7 @@ export default function DetailPost() {
   const [deletePopUp, setDeletePopUp] = useState(false)
   const [reportPopUp, setReportPopUp] = useState(false)
   const [warningPopUp, setWarningPopUp] = useState(false)
+  const [warningPopUpBlocked, setWarningPopUpBlocked] = useState(false)
   const [warning, setWarning] = useState("")
   const [content, setContent] = useState("")
   const [comments, setComments] = useState([])
@@ -278,12 +279,24 @@ export default function DetailPost() {
         {warningPopUp ? 
         <>
           <div className='popup-div'>
-            <p>You sure you wanna report?</p>
+            <p>Enter your report message.</p>
+            <p> It will be displayed at the top of the comment section.</p>
             <textarea onChange={(e) => {setWarning(e.target.value)}} value= {warning}></textarea>
             <button onClick={() => setWarningPopUp(false)}>Cancel</button>
             <button onClick={() => handleWarn()}>
               Confirm
             </button>
+          </div>
+          <div className='popup-blackout'></div>
+        </> :
+        null
+        }
+        {warningPopUpBlocked ? 
+        <>
+          <div className='popup-div'>
+            <p>A health professional already left a report.</p>
+            <p>Please add a comment to the post instead!</p>
+            <button onClick={() => setWarningPopUpBlocked(false)}>Cancel</button>
           </div>
           <div className='popup-blackout'></div>
         </> :
@@ -313,7 +326,11 @@ export default function DetailPost() {
                 onClick={() => {
                   console.log(User)
                   if (User.is_health_professional) {
-                    setWarningPopUp(true)
+                    if (!post.warning) {
+                      setWarningPopUp(true)
+                    } else {
+                      setWarningPopUpBlocked(true)
+                    }
                   } else {
                     getFields(PostsReportedByUsers, 'id').includes(post.id) ?
                     handleReport(post.id) : 
@@ -337,7 +354,6 @@ export default function DetailPost() {
         }
         <div>
         {post.warning ? <div className="post-div">
-          {JSON.stringify(post)}
           <p>Content: {post.warning}</p>
           <p>Author: {post.warn_author_username}</p>
         </div> : null}

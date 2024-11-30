@@ -48,7 +48,7 @@ class Post(models.Model):
     saved_by_user = models.ManyToManyField(User, related_name="saved_posts")
     warning = models.TextField(default='')
     warn_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts_warned', null=True, blank=True)
-    # warn_author_username = models.TextField(default='')
+    warn_author_username = models.TextField(default='')
 
 
     def __str__(self):
