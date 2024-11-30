@@ -248,7 +248,7 @@ export default function DetailPost() {
             </div>
             <div style={{display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center', color: 'gray'}}>
               {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>{post.reports} reports</p> : null}      
-              {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button className='main-feed-post-body-delete' onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
+              {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button  style={{margin: '0px'}} className='main-feed-post-body-delete' onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
             </div>
         </div>
         <p className="main-feed-post-body-title">{post.title}</p>
@@ -380,8 +380,6 @@ export default function DetailPost() {
             </div>
             </div>
             <div style={{display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center', color: 'gray'}}>
-              {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>{post.reports} reports</p> : null}      
-              {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button className='main-feed-post-body-delete' onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
             </div>
           </div>
           <p style={{margin: '13px 0px'}} className="main-feed-post-body-content">{el.content}</p>
@@ -392,7 +390,7 @@ export default function DetailPost() {
               onClick={() => {handleCommentLike(el)}}>
               {el.likes} likes
             </button>
-            <p className="main-feed-post-body-time">{formatTime(post.created_at)}</p>
+            <p className="main-feed-post-body-time">{formatTime(el.created_at)}</p>
           </div>
         </div>
       )}
