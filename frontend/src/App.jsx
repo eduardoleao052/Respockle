@@ -35,13 +35,13 @@ function App() {
         <div className="app">
 
           <Routes>
-            <Route path="/" element={<ProtectedRoute><><Sidebar /><Home  feed={feed} setFeed={setFeed}/></></ProtectedRoute>}/>
-            <Route path="/create_post" element={<ProtectedRoute><><Sidebar /><CreatePost /></></ProtectedRoute>}/>
+            <Route path="/" element={<ProtectedRoute><><Sidebar /><div className="vertical-line"></div><Home  feed={feed} setFeed={setFeed}/></></ProtectedRoute>}/>
+            <Route path="/create_post" element={<ProtectedRoute><><Sidebar /><div className="vertical-line"></div><CreatePost /></></ProtectedRoute>}/>
             <Route path="/login" element={<Login />} />
-            <Route path='/detail/:id' element={<ProtectedRoute><><Sidebar /><DetailPost /></></ProtectedRoute>} />
-            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar trigger={trigger} /><Community setTrigger={setTrigger} feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
-            <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><SavedPosts feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
-            <Route path='/profile/:id' element={<ProtectedRoute><><Sidebar /><Profile feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
+            <Route path='/detail/:id' element={<ProtectedRoute><><Sidebar /><div className="vertical-line"></div><DetailPost /></></ProtectedRoute>} />
+            <Route path='/community/:id' element={<ProtectedRoute><><Sidebar trigger={trigger} /><div className="vertical-line"></div><Community setTrigger={setTrigger} feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
+            <Route path='/saved_posts/' element={<ProtectedRoute><><Sidebar /><div className="vertical-line"></div><SavedPosts feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
+            <Route path='/profile/:id' element={<ProtectedRoute><><Sidebar /><div className="vertical-line"></div><Profile feed={feed} setFeed={setFeed}/></></ProtectedRoute>} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/register" element={<RegisterAndLogout />} />
             <Route path="*" element={<NotFound />}/>

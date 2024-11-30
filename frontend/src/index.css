@@ -6,11 +6,23 @@
 #root {
     height: 100%;
 }
-
+.vertical-line {
+    background-color: rgb(214, 214, 214);
+    width: 1.2px;
+    margin-left: 20%;
+}
+.horizontal-line {
+    height: 1.2px;
+    width: 87%;
+    background-color: rgb(214, 214, 214);
+    margin: auto;
+}
 .main {
     width: 80%;
-    margin-top: 140px;
-    margin-left: 20%;
+    padding-top: 76px;
+    padding-left: 25px;
+    background-color: rgb(251, 251, 251);
+
 }
 
 #main-searchbar {
@@ -22,7 +34,7 @@
 }
 
 #header-searchbar {
-    width: 325px;
+    width: 525px;
     background-color: rgb(255, 255, 255);
     border: 1px solid rgb(189, 189, 189);
     padding: 10px 20px;
@@ -63,16 +75,47 @@
 }
 
 .header-navbar {
-    padding-top: 12px;
-    background-color: aqua;
-    height: 100px;
+    background-color: #0571d3;
     width: 100%;
     align-items: center;
     justify-content: center;
     text-align: center;
     position: fixed;
     top: 0;
+    color: white;
+    padding: 10px;
 }
+
+.header-navbar-button {
+    text-decoration: none;
+    background: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 0px 20px;
+    border-radius: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.header-navbar-searchbar {
+    padding: 0px 20px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-navbar-button:hover {
+    background-color: #0268c8;
+}
+
+
 
 #community-searchbar {
     color: red;
@@ -215,8 +258,6 @@ button:hover {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px 200px;
-    background-color: aqua;
     margin: 0;
 }
 
@@ -224,8 +265,6 @@ button:hover {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px 200px;
-    background-color: aqua;
     margin: 0;
 }
 
@@ -271,6 +310,7 @@ button:hover {
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
+    padding-top: 20px;
 }
 .main-profile-profile-header-div {
     display: flex;
@@ -295,7 +335,7 @@ button:hover {
 .sidebar {
     width: 20%;
     position: fixed;
-    top: 130px;
+    top: 90px;
 }
 
 .sidebar button {
@@ -308,19 +348,13 @@ button:hover {
     text-align: center;
 }
 
-.horizontal-line {
-    height: 1.6px;
-    width: 87%;
-    background-color: rgb(214, 214, 214);
-    margin: auto;
-}
-
 .coooooo {
     color: aqua;
 }
 
 .post-detail {
     width: 65%;
-    margin-top: 140px;
-    margin-left: 20%;
+    background-color: rgb(251, 251, 251);
+    padding-top: 95px;
+    padding-left: 60px;
 }

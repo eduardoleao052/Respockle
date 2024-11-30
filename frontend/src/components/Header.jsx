@@ -83,22 +83,30 @@ export default function Header() {
 
   return (
         <nav className='header-navbar'>
-          <h1 className='header-title'>Dalilah the Crafty's Wonderful App for Diabeticals</h1>
             {
                 token ? 
                 <div className='header-navbar-authfalse'>
-                    <a href="/logout" onClick={() => isLoggedIn()}>Logout</a>
-                    <div>
+                  <button className='header-navbar-button' onClick={() => {navigateTo('/')}}>
+                    <img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}assets/logo.png`}/>
+                    <h1 className='header-title'>Dalilah</h1>
+                  </button>
+                    <button className='header-navbar-button' onClick={() => {navigateTo('/logout')}}>Logout</button>
+                    {/* <a href="/logout" onClick={() => isLoggedIn()}>Logout</a> */}
+                    <div className="header-navbar-searchbar" >
                         <CommunitySearchBar onClick={handlePullData} onSearch={handleSearch} />
                         {(document.activeElement === document.getElementById('header-searchbar') && showDropdown) ?
                         <ResultsList results={filteredData} /> :
                         null}
                     </div>
-                    <button onClick={() => {navigateTo('/create_post')}}>Create Post</button>
-                    <a 
-                      className="header-profile-a" 
+                    <button 
+                      className="header-navbar-button" 
+                      onClick={() => {navigateTo('/create_post')}}>
+                      Create Post
+                    </button>
+                    <button
+                      className="header-navbar-button" 
                       href={`/profile/${user?.id}`}  
-                      onClick={() => isLoggedIn()}>
+                      onClick={() => {navigateTo(`/profile/${user?.id}`)}}>
                       <img 
                         className="header-profile-picture" 
                         src={`${import.meta.env.VITE_API_URL}${profile ? profile.profile_picture : 'assets/default_profile_picture.png'}`}>
@@ -106,10 +114,11 @@ export default function Header() {
                       <p>
                         {user?.username}
                       </p>
-                    </a>                  
+                    </button>                 
                 </div>
                 : 
                 <div className='header-navbar-authtrue'>
+                    <h1 className='header-title'>Dalilah</h1>
                     <a href="/login" onClick={() => isLoggedIn()}>Login</a> 
                     <br />
                     <a href="/register"  onClick={() => isLoggedIn()}>Register</a>
