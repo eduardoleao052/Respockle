@@ -4,7 +4,6 @@ import api from "../api"
 import "../styles/Home.css"
 import { useNavigate, useLocation } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
-import ResultsList from '../components/ResultsList';
 
 export default function Home({feed, setFeed}) {
   const [posts, setPosts] = useState([]);
@@ -181,6 +180,9 @@ export default function Home({feed, setFeed}) {
             <div className="main-feed-post-header-info">
               <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : '...'}</button>
               <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}</button>
+            </div>
+            <div className="main-feed-post-header-warning">
+              {el.warning ? "!" : ""}
             </div>
           </div>
           <p className="main-feed-post-body-title">{el.title}</p>

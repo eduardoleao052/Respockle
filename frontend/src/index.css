@@ -131,6 +131,9 @@
     align-items: center;
     margin-top: 2px;
 }
+.main-feed-post-header-warning {
+    text-align: right;
+}
 
 .bold {
     cursor: pointer;

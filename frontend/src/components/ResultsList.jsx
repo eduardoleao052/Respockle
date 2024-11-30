@@ -5,6 +5,10 @@ function ResultsList({ results }) {
 
     const navigateTo = useNavigate()
 
+    useEffect(() => {
+      console.log(results)
+    },[])
+
     return (
       <div className="header-searchbar-recomendations">
         {results.map((item, index) => (

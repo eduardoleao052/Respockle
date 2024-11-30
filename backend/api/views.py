@@ -65,10 +65,18 @@ def post_create(request):
     data=request.data.copy()
     data["author_username"] = request.user.username
     serializer = PostSerializer(data=data)
-    print("AAA",serializer)
-    print("BBB",serializer.is_valid())
     if serializer.is_valid():
         serializer.save(author=request.user)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def post_add_warning(request, pk):
+    data=request.data
+    data["warn_author_username"] = request.user.username
+    post=Post.objects.get(id=pk)
+    serializer = PostSerializer(post, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save(warn_author=request.user)
     return Response(serializer.data)
 
 def community_create(request):

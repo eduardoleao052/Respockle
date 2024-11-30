@@ -13,6 +13,8 @@ export default function DetailPost() {
   const [User, setUser] = useState(null);
   const [deletePopUp, setDeletePopUp] = useState(false)
   const [reportPopUp, setReportPopUp] = useState(false)
+  const [warningPopUp, setWarningPopUp] = useState(false)
+  const [warning, setWarning] = useState("")
   const [content, setContent] = useState("")
   const [comments, setComments] = useState([])
   const [communities, setCommunities] = useState(null);
@@ -214,6 +216,18 @@ export default function DetailPost() {
     setContent(e.target.value)
   }
 
+  const handleWarn = () => {
+    api.post(`/api/posts/add_warning/${id}/`, {warning}).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        getPost()
+      } else {
+        alert("Failed to create warning!")
+      }
+    }).catch((error) => alert(error))
+    setWarning('')
+    setWarningPopUp(false)
+  }
+
 
   return (
     post ? 
@@ -261,6 +275,20 @@ export default function DetailPost() {
         </> :
         null
         }
+        {warningPopUp ? 
+        <>
+          <div className='popup-div'>
+            <p>You sure you wanna report?</p>
+            <textarea onChange={(e) => {setWarning(e.target.value)}} value= {warning}></textarea>
+            <button onClick={() => setWarningPopUp(false)}>Cancel</button>
+            <button onClick={() => handleWarn()}>
+              Confirm
+            </button>
+          </div>
+          <div className='popup-blackout'></div>
+        </> :
+        null
+        }
         <div className="main-feed-post-body-footer">
           <div className="main-feed-post-body-footer-left">
             <button
@@ -283,8 +311,9 @@ export default function DetailPost() {
             <button className="main-feed-post-body-likes"
                 style={{backgroundColor: getFields(PostsReportedByUsers, 'id').includes(post.id) ? '#9c1010' : '#a1a1a1'}} 
                 onClick={() => {
-                  if (false) {
-                    console.log('uau')
+                  console.log(User)
+                  if (User.is_health_professional) {
+                    setWarningPopUp(true)
                   } else {
                     getFields(PostsReportedByUsers, 'id').includes(post.id) ?
                     handleReport(post.id) : 
@@ -307,6 +336,11 @@ export default function DetailPost() {
         null
         }
         <div>
+        {post.warning ? <div className="post-div">
+          {JSON.stringify(post)}
+          <p>Content: {post.warning}</p>
+          <p>Author: {post.warn_author_username}</p>
+        </div> : null}
         {comments.map((el,id) => 
         <div className="post-div" key={id}>
           <p>Content: {el.content}</p>

@@ -10,7 +10,7 @@ from .models import Post, Community, Comment, Profile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "password"]
+        fields = ["id", "username", "password", "is_health_professional"]
         extra_kwargs = {"password" : {"write_only": True}}
 
     def create(self, validated_data):
@@ -21,8 +21,8 @@ class PostSerializer(serializers.ModelSerializer):
     post_picture = serializers.ImageField(required=False)
     class Meta:
         model = Post
-        fields = ["id", "title", "content", "created_at", "author", "author_username", "community_profile_picture", "likes", "reports", "community", "post_picture"]
-        extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}, "reports" : {"read_only": True}}
+        fields = ["id", "title", "content", "created_at", "author", "warning", "warn_author",  "author_username", "community_profile_picture", "likes", "reports", "community", "post_picture"]
+        extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}, "reports" : {"read_only": True}, "warn_author" : {"read_only": True}, "warn_author_username" : {"read_only": True}}
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,5 +40,5 @@ class CommunitySerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ["id", "bio", "email", "created_at", "profile_picture", "is_health_professional", "user_id"]
+        fields = ["id", "bio", "email", "created_at", "profile_picture", "user_id"]
         extra_kwargs = {"user_id" : {"read_only": True}}

@@ -11,7 +11,7 @@ export default function Header() {
     const [user, setUser] = useState(null);
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
-    const [showDropdown, setShowDropdown] = useState([false]);
+    const [showDropdown, setShowDropdown] = useState(false);
     const [profile, setProfile] = useState('');
     const navigateTo = useNavigate()
 
@@ -19,7 +19,6 @@ export default function Header() {
         setInterval(() => {
             setToken(localStorage.getItem(ACCESS_TOKEN));
         },10);
-        console.log("aaaaa")
         if (token) {
           getUser()
         }
@@ -91,7 +90,9 @@ export default function Header() {
                     <a href="/logout" onClick={() => isLoggedIn()}>Logout</a>
                     <div>
                         <CommunitySearchBar onClick={handlePullData} onSearch={handleSearch} />
-                        {(document.activeElement === document.getElementById('community_searchbar') && showDropdown) ? <ResultsList results={filteredData} /> : null}
+                        {(document.activeElement === document.getElementById('header-searchbar') && showDropdown) ?
+                        <ResultsList results={filteredData} /> :
+                        null}
                     </div>
                     <button onClick={() => {navigateTo('/create_post')}}>Create Post</button>
                     <a 
