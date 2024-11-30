@@ -36,6 +36,18 @@ def saved_posts_by_likes(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def user_posts(request, pk):
+    posts = Post.objects.filter(author = pk).order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def user_posts_by_likes(request, pk):
+    posts = Post.objects.filter(author = pk).order_by('-likes')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def post_comments(request, pk):
     comments = Comment.objects.filter(post=pk).order_by('-created_at')
     serializer = CommentSerializer(comments, many=True)
@@ -92,6 +104,8 @@ def community_create(request):
 @api_view(['POST'])
 def post_create_comment(request, pk):
     data=request.data
+    user_profile = Profile.objects.get(user_id = request.user.id)
+    data["author_profile_picture"] = user_profile.profile_picture
     data["author_username"] = request.user.username
     data["post"] = pk
     serializer = CommentSerializer(data=data)

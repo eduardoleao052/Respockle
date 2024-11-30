@@ -45,7 +45,6 @@ export default function CreatePost() {
     if (document.getElementById("community").value === "") {
         return
     }
-
     let formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
@@ -57,6 +56,7 @@ export default function CreatePost() {
     api.post(`/api/posts/create/`, formData).then((res) => {
       if (res.status === 201 || res.status === 200) {
         console.log('posted')
+        navigateTo(`/community/${community}`)
       } else {
         alert("Failed to create post!")
       }
@@ -66,7 +66,6 @@ export default function CreatePost() {
     setCommunity(null);
     setPostPicture(null);
     document.getElementById("community").value = "";
-    navigateTo(`/community/${community}`)
   }
 
   return (

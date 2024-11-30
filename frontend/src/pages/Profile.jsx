@@ -8,12 +8,14 @@ import SearchBar from '../components/SearchBar';
 export default function Profile({feed, setFeed}) {
   const [posts, setPosts] = useState([]);
   const [User, setUser] = useState(null);
+  const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [popUp, setPopUp] = useState(false);
   const [profile, setProfile] = useState(null);
   const [dropDown, toggleDropDown] = useState(false);
   const [PostsLikedByUsers, setPostsLikedByUsers] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
   const [communities, setCommunities] = useState(null);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const navigateTo = useNavigate();
@@ -24,6 +26,7 @@ export default function Profile({feed, setFeed}) {
   useEffect(() => {
     getUsers();
     getProfile(userId);
+    getUsername(userId);
     getLikesByUser();
     getCommunities();
     if (feed==='created_at') {
@@ -50,14 +53,6 @@ export default function Profile({feed, setFeed}) {
     } else return 'now'
   }
 
-  const getUserPostsByLikes = () => {
-    api
-    .get("/api/posts/saved_posts_by_likes/")
-    .then((res) => res.data)
-    .then((data) => {setPosts(data); setFilteredPosts(data)})
-    .catch((error) => alert(error))
-  }
-
   function getFields(input, field) {
     if (!input) return []
     var output = [];
@@ -81,7 +76,15 @@ export default function Profile({feed, setFeed}) {
 
   const getUserPosts = () => {
     api
-    .get(`/api/posts/saved_posts/`)
+    .get(`/api/posts/user_posts/${userId}/`)
+    .then((res) => res.data)
+    .then((data) => {setPosts(data); setFilteredPosts(data)})
+    .catch((error) => alert(error))
+  }
+
+  const getUserPostsByLikes = () => {
+    api
+    .get(`/api/posts/user_posts_by_likes/${userId}/`)
     .then((res) => res.data)
     .then((data) => {setPosts(data); setFilteredPosts(data)})
     .catch((error) => alert(error))
@@ -120,6 +123,15 @@ export default function Profile({feed, setFeed}) {
     .then((data) => {setProfile(data)})
     .catch((error) => alert(error))
   }
+
+  const getUsername = (id) => {
+    api
+    .get(`/api/posts/user/username/${id}/`)
+    .then((res) => res.data)
+    .then((data) => {setUsername(data.username)})
+    .catch((error) => alert(error))
+  }
+
 
   const getCommunities = () => {
     api
@@ -178,8 +190,8 @@ export default function Profile({feed, setFeed}) {
       <div className='main-profile-profile-header'>
         <img className='main-profile-profile-picture' src={`${import.meta.env.VITE_API_URL}${profile ? profile.profile_picture : 'assets/default_profile_picture.png'}`} alt="profile_picture" />
         <div className='main-profile-profile-header-div'>
-          <p>{User ? User.username : '...'}</p>
-          <p>Joined {profile ? formatTime(profile.created_at) : '...'} ago</p>
+          <h1>{username ? username : '...'}</h1>
+          <p style={{color: 'gray'}}>Joined {profile ? formatTime(profile.created_at) : '...'} ago</p>
         </div>
       </div>
       <p>{profile ? profile.bio : '...'}</p>
@@ -188,12 +200,21 @@ export default function Profile({feed, setFeed}) {
         {popUp ?
         <> 
           <div className='popup-div'>
-            <p>Bio:</p>
-            <textarea name="description" value={bio} onChange={(e) => setBio(e.target.value)}></textarea>
-            <p>Profile picture:</p>
-            <input type="file" accept="image/*" onChange={(e) => setProfilePicture(e.target.files[0])}/>
-            <button onClick={() => setPopUp(false)}>Cancel</button>
-            <button onClick={handleUpdateProfile}>Submit</button>
+            <h1>Update Profile</h1>
+            <div className='popup-div-body'>
+              <div className='popup-div-body-top more_gap'>
+                <label htmlFor="inputField"><img className="btn-info" src={`${profilePicture ? imageUrl : profile.profile_picture ? `${import.meta.env.VITE_API_URL}${profile.profile_picture}` : `${import.meta.env.VITE_API_URL}assets/default_profile_picture.png`}`}/></label>
+                <input type="file" id="inputField" accept="image/*" onChange={(e) => {setProfilePicture(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]));}}/>
+                <div className='popup-div-body-top-right more_gap'>
+                  <p>Description:</p>
+                  <textarea name="bio" value={bio} onChange={(e) => setBio(e.target.value)}></textarea>
+                </div>
+              </div>
+            </div>
+            <div className='popup-div-footer'>
+              <button className="create-community-button-cancel" onClick={() => {setPopUp(false); setProfilePicture(null)}}>Cancel</button>
+              <button className="create-community-button-create" onClick={handleUpdateProfile}>Submit</button>
+            </div>
           </div>
           <div className='popup-blackout'></div>
         </>
@@ -207,12 +228,12 @@ export default function Profile({feed, setFeed}) {
           <div>
             <button 
               style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
-              onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
+              onClick={() => {getUserPostsByLikes(); setFeed('likes')}}>
               Most Popular
               </button>
             <button 
               style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
-              onClick={() => {getSavedPosts(); setFeed('created_at')}}>
+              onClick={() => {getUserPosts(); setFeed('created_at')}}>
               Recent
             </button>
           </div> : null}
@@ -221,7 +242,37 @@ export default function Profile({feed, setFeed}) {
           <SearchBar onSearch={handleSearch} />
         </div>
       </div>
-      {"FEED"}
+      {filteredPosts.map((el,id) => 
+        <div className="post-div" onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })} key={id}>
+          <div className="main-feed-post-header">
+            <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+            <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === el.community)[0]?.community_picture ? communities.filter((c) => c.id === el.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />
+            <div className="main-feed-post-header-info">
+              <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : '...'}</button>
+              <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}</button>
+            </div>
+            </div>
+            <div>
+            {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p style={{color:'gray'}} className="main-feed-post-body-content">{el.reports} reports</p> : ''}
+            <div className="main-feed-post-header-warning">
+              {el.warning ? <button className='main-feed-post-body-warned'>!</button> : ""}
+            </div>
+            </div>
+          </div>
+          <p className="main-feed-post-body-title">{el.title}</p>
+          <p className="main-feed-post-body-content">{el.content.slice(0,400)}{el.content.length > 400 ? '...' : ''}</p>
+          {el.post_picture ? <img className='main-feed-post-image' src={`${import.meta.env.VITE_API_URL}${el.post_picture}`} alt="error loading post image"/> : null}
+          <div className="main-feed-post-body-footer">
+            <button
+              className='main-feed-post-body-likes'
+              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? '#0571d3' : 'gray'}} 
+              onClick={(e) => {e.stopPropagation() ;handleLike(el)}}>
+              {el.likes} likes
+            </button>
+            <p className="main-feed-post-body-time">{formatTime(el.created_at)}</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

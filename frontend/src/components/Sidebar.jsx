@@ -9,7 +9,8 @@ export default function Sidebar({trigger}) {
   const [origin, setOrigin] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [community_picture, set_community_picture] = useState('');
+  const [community_picture, set_community_picture] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
   const [createCommunityForm, toggleCreateCommunityForm] = useState(false);
   const location = useLocation();
   const from = location.state?.from?.pathname || '/'; 
@@ -115,13 +116,25 @@ export default function Sidebar({trigger}) {
       {createCommunityForm ?
       <> 
         <div className='popup-div'>
-          <p>Name:</p>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
-          <p>Description:</p>
-          <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-          <input type="file" accept="image/*" onChange={(e) => set_community_picture(e.target.files[0])}/>
-          <button onClick={() => toggleCreateCommunityForm((c) => !c)}>Cancel</button>
-          <button onClick={handleCreateCommunity}>Create</button>
+          <h1>Create a Community</h1>
+          <div className='popup-div-body'>
+            <div className='popup-div-body-top'>
+              <label htmlFor="inputField"><img className="btn-info" src={`${community_picture ? imageUrl : `${import.meta.env.VITE_API_URL}assets/default_community_image.png`}`}/></label>
+              <input type="file" id="inputField" accept="image/*" onChange={(e) => {set_community_picture(e.target.files[0]); console.log(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]));}}/>
+              <div className='popup-div-body-top-right'>
+                <p>Name:</p>
+                <input className="create-community-input-title" type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+              </div>
+            </div>
+            <div className='popup-div-body-bottom'>
+              <p>Description:</p>
+              <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
+            </div>
+          </div>
+          <div className='popup-div-footer'>
+            <button className="create-community-button-cancel" onClick={() => {toggleCreateCommunityForm((c) => !c); set_community_picture(null)}}>Cancel</button>
+            <button className="create-community-button-create" onClick={handleCreateCommunity}>Create</button>
+          </div>
         </div>
         <div className='popup-blackout'></div>
       </> : null}
@@ -130,17 +143,20 @@ export default function Sidebar({trigger}) {
           className='sidebar-community-button' 
           style={{backgroundColor: origin === 'home' ? '#e1e1e1' : 'white'}} 
           onClick={() => {navigateTo(`/`)}}>
-          Home
+          <img className="sidebar-community-image" src={`${import.meta.env.VITE_API_URL}assets/home.png`} alt="community image" />
+          <p>Home</p>
         </button>
         <button 
           className='sidebar-community-button' 
           style={{backgroundColor: origin === 'saved_posts' ? '#e1e1e1' : 'white'}} 
           onClick={() => navigateTo(`/saved_posts`)}>
-          Saved
+          <img className="sidebar-community-image" src={`${import.meta.env.VITE_API_URL}assets/saved.png`} alt="community image" />
+          <p>Saved</p>
         </button>
         <div className='horizontal-line'></div>
+        <h3>Communities</h3>
         <button 
-          style={{backgroundColor: createCommunityForm ? '#e1e1e1' : 'white'}} 
+          style={{backgroundColor: createCommunityForm ? '#e1e1e1' : 'white', textAlign: 'center'}} 
           className='sidebar-community-button' onClick={() => toggleCreateCommunityForm(!createCommunityForm)}>
           [+]
         </button>

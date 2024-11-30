@@ -233,31 +233,37 @@ export default function DetailPost() {
   return (
     post ? 
       <div className="post-detail" key={id}>
-        <button onClick={() => navigateTo(-1)}>Back</button>
+        <button className="main-feed-post-body-back" onClick={() => navigateTo(-1)}>&#8592;</button>
         <div className="main-feed-post-header">
-        <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === post.community)[0]?.community_picture ? communities.filter((c) => c.id === post.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />          
-        <div className="main-feed-post-header-info">
-          <button className='main-feed-post-url bold' onClick={() => navigateTo(`/community/${post.community}`)}>
-            {communities ? communities.filter((community) => community.id === post.community)[0].name : null}
-          </button>  
-          <button className='main-feed-post-url' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
-            {post.author_username}
-          </button>
-          </div>
+            <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+            <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === post.community)[0]?.community_picture ? communities.filter((c) => c.id === post.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />          
+            <div className="main-feed-post-header-info">
+              <button className='main-feed-post-url bold' onClick={() => navigateTo(`/community/${post.community}`)}>
+                {communities ? communities.filter((community) => community.id === post.community)[0].name : null}
+              </button>  
+              <button className='main-feed-post-url gray' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
+                {post.author_username}
+              </button>
+            </div>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center', color: 'gray'}}>
+              {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>{post.reports} reports</p> : null}      
+              {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button className='main-feed-post-body-delete' onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
+            </div>
         </div>
-        <p className="main-feed-post-body-title">Title: {post.title}</p>
-        <p className="main-feed-post-body-content">Content: {post.content}</p>
-        {post.post_picture ? <img src={`${import.meta.env.VITE_API_URL}${post.post_picture}`} alt="error loading post image"/> : null}
-        {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>Reports: {post.reports}</p> : null}      
-        {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
+        <p className="main-feed-post-body-title">{post.title}</p>
+        <p className="main-feed-post-body-content">{post.content}</p>
+        {post.post_picture ? <img className='main-feed-post-image' src={`${import.meta.env.VITE_API_URL}${post.post_picture}`} alt="error loading post image"/> : null}
         {deletePopUp ? 
         <>
           <div className='popup-div'>
-            <p>You sure you wanna delete?</p>
-            <button onClick={() => setDeletePopUp(false)}>Cancel</button>
-            <button onClick={() => deletePost(deletePopUp)}>
-              Confirm
+            <p>Do you want to delete this post?</p>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '0px 20px'}}>
+              <button className="main-feed-post-body-back" onClick={() => setDeletePopUp(false)}>Cancel</button>
+              <button className="main-feed-post-body-delete" onClick={() => deletePost(deletePopUp)}>
+              Delete
             </button>
+            </div>
           </div>
           <div className='popup-blackout'></div>
         </> :
@@ -266,11 +272,15 @@ export default function DetailPost() {
         {reportPopUp ? 
         <>
           <div className='popup-div'>
-            <p>You sure you wanna report?</p>
-            <button onClick={() => setReportPopUp(false)}>Cancel</button>
-            <button onClick={() => handleReport(reportPopUp)}>
-              Confirm
-            </button>
+            <p>Do you want to report this post?</p>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '0px 20px'}}>
+              <button className="main-feed-post-body-back" onClick={() => setReportPopUp(false)}>
+                Cancel
+              </button>
+              <button className="main-feed-post-body-delete" onClick={() => handleReport(reportPopUp)}>
+                Report
+              </button>
+            </div>
           </div>
           <div className='popup-blackout'></div>
         </> :
@@ -342,6 +352,7 @@ export default function DetailPost() {
             </div>
             <p className="main-feed-post-body-time">{formatTime(post.created_at)}</p>
           </div>
+          <div className='horizontal-line'></div>
         { commenting ? 
         <div>
           <form action=''>
@@ -359,14 +370,30 @@ export default function DetailPost() {
         </div> : null}
         {comments.map((el,id) => 
         <div className="post-div" key={id}>
-          <p>Content: {el.content}</p>
-          <p>Author: {el.author_username}</p>
-          <p>Likes: {el.likes}</p>
-          <button
-              style={{backgroundColor: getFields(CommentsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
-              onClick={() => handleCommentLike(el)}>
-              Like
-          </button>
+          <div className="main-feed-post-header">
+            <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+            <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${el.author_profile_picture ? el.author_profile_picture  : 'assets/default_profile_picture.png'}`} alt="" />          
+            <div className="main-feed-post-header-info">
+              <button style={{paddingTop: '6px'}} className='main-feed-post-url bold' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
+                {el.author_username}
+              </button>
+            </div>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center', color: 'gray'}}>
+              {communities?.filter((c) => c.id === post.community)[0].author === User?.id ? <p>{post.reports} reports</p> : null}      
+              {(post.author === User?.id || communities?.filter((c) => c.id === post.community)[0].author === User?.id) ? <button className='main-feed-post-body-delete' onClick={() => setDeletePopUp(post.id)}>Delete</button> : null}
+            </div>
+          </div>
+          <p style={{margin: '13px 0px'}} className="main-feed-post-body-content">{el.content}</p>
+          <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+            <button
+              className='main-feed-post-body-likes'
+              style={{backgroundColor: getFields(CommentsLikedByUsers, 'id').includes(el.id) ? '#0571d3' : '#a1a1a1'}} 
+              onClick={() => {handleCommentLike(el)}}>
+              {el.likes} likes
+            </button>
+            <p className="main-feed-post-body-time">{formatTime(post.created_at)}</p>
+          </div>
         </div>
       )}
         </div>
