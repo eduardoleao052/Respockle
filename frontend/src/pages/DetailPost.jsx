@@ -299,10 +299,10 @@ export default function DetailPost() {
         <>
           <div className='popup-div'>
             <p>Enter your report message.</p>
-            <p> It will be displayed at the top of the comment section.</p>
-            <textarea onChange={(e) => {setWarning(e.target.value)}} value= {warning}></textarea>
-            <button onClick={() => setWarningPopUp(false)}>Cancel</button>
-            <button onClick={() => handleWarn()}>
+            <p style={{marginBottom: "20px"}}> It will be displayed at the top of the comment section.</p>
+            <textarea style={{display: "block"}} onChange={(e) => {setWarning(e.target.value)}} value= {warning}></textarea>
+            <button style={{marginRight: "30px"}} className="main-feed-post-body-back" onClick={() => setWarningPopUp(false)}>Cancel</button>
+            <button style={{marginLeft: "30px"}} className="main-feed-post-body-delete" onClick={() => handleWarn()}>
               Confirm
             </button>
           </div>
