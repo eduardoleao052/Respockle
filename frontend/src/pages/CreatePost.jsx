@@ -76,10 +76,11 @@ export default function CreatePost() {
         <div className="create-post-title-div">
           <label  htmlFor="title">Title:</label>
           <br />
-          <input className="create-post-input-title" type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>
+          <input style={{marginTop: '10px'}} className="create-post-input-title" type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>
         </div>
         <br />
         <div className="create-post-image-div">
+          <p style={{marginBottom: '10px'}}>Image:</p>
           <label htmlFor="postInputField"><img className="post-btn-info" src={`${postPicture ? imageUrl : `${import.meta.env.VITE_API_URL}assets/default_image_picture.jpg`}`}/></label>
           <input type="file" id="postInputField" accept="image/*" onChange={(e) => {setPostPicture(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]))}}/>
           <br />
@@ -87,7 +88,7 @@ export default function CreatePost() {
         <div className='create-post-content-div'>
           <label htmlFor="content">Content:</label>
           <br />
-          <textarea  className='content-post-box' id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
+          <textarea style={{marginTop: '10px'}} className='content-post-box' id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
           <br />
         </div>
         <div className='create-post-community-div'>
