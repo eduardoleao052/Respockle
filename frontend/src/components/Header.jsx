@@ -88,7 +88,7 @@ export default function Header() {
                 <div className='header-navbar-authfalse'>
                   <button className='header-navbar-button' onClick={() => {navigateTo('/')}}>
                     <img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}assets/logo.png`}/>
-                    <h1 className='header-title'>Dalilah</h1>
+                    <h1 className='header-title'>Respockle</h1>
                   </button>
                     <button className='header-navbar-button' onClick={() => {navigateTo('/logout')}}>Logout</button>
                     {/* <a href="/logout" onClick={() => isLoggedIn()}>Logout</a> */}
@@ -119,7 +119,7 @@ export default function Header() {
                 : 
                 <div className='header-navbar-authtrue'>
                     <img className="header-profile-picture-authtrue" src={`${import.meta.env.VITE_API_URL}assets/logo.png`}/>
-                    <h1 className='header-title-authtrue'>Dalilah</h1>                
+                    <h1 className='header-title-authtrue'>Respockle</h1>                
                 </div>
             }
         </nav>
