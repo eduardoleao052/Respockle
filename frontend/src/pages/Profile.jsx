@@ -24,6 +24,7 @@ export default function Profile({feed, setFeed}) {
 
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     getUsers();
     getProfile(userId);
     getUsername(userId);
@@ -34,7 +35,7 @@ export default function Profile({feed, setFeed}) {
     } else {
       getUserPostsByLikes();
     }
-  },[])
+  },[location])
 
   function formatTime(time) {
     let timeSinceCreation = (Date.now() - new Date(time).getTime())/1000;
@@ -196,7 +197,7 @@ export default function Profile({feed, setFeed}) {
       </div>
       <p>{profile ? profile.bio : '...'}</p>
       <div>
-        <button className='main-profile-update-button' onClick={(t) => setPopUp(true)}>Update Profile</button>
+        {userId === User?.id ? <button className='main-profile-update-button' onClick={(t) => setPopUp(true)}>Update Profile</button> : null}
         {popUp ?
         <> 
           <div className='popup-div'>

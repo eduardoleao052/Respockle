@@ -250,7 +250,7 @@ export default function DetailPost() {
               <button className='main-feed-post-url bold' onClick={() => navigateTo(`/community/${post.community}`)}>
                 {communities ? communities.filter((community) => community.id === post.community)[0].name : null}
               </button>  
-              <button className='main-feed-post-url gray' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
+              <button className='main-feed-post-url gray' onClick={(e) => {navigateTo(`/profile/${post.author}`);}}>
                 {post.author_username}{post.author_is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null}
               </button>
             </div>
