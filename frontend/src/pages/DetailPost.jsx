@@ -315,7 +315,7 @@ export default function DetailPost() {
           <div className='popup-div'>
             <p>A health professional already left a report.</p>
             <p>Please add a comment to the post instead!</p>
-            <button onClick={() => setWarningPopUpBlocked(false)}>Cancel</button>
+            <button className="main-feed-post-body-back" onClick={() => setWarningPopUpBlocked(false)}>Cancel</button>
           </div>
           <div className='popup-blackout'></div>
         </> :
