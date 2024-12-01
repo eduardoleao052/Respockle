@@ -154,12 +154,14 @@ export default function Sidebar({trigger}) {
           <p>Saved</p>
         </button>
         <div className='horizontal-line'></div>
-        <h3>Communities</h3>
-        <button 
-          style={{backgroundColor: createCommunityForm ? '#e1e1e1' : 'white', textAlign: 'center'}} 
-          className='sidebar-community-button' onClick={() => toggleCreateCommunityForm(!createCommunityForm)}>
-          [+]
-        </button>
+        <div className='sidebar-community-div'>
+          <h3>My Communities</h3>
+          <button 
+            style={{filter: createCommunityForm ? 'brightness(0.8)' : '', textAlign: 'center'}} 
+            className='sidebar-community-button-create' onClick={() => toggleCreateCommunityForm(!createCommunityForm)}>
+            +
+          </button>
+        </div>
       {userCommunities.map((el,id)=>
         <button 
           className='sidebar-community-button'
