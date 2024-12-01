@@ -147,12 +147,12 @@ export default function SavedPosts({feed, setFeed}) {
   return (
     <div className='main'>
       <div className='main-header'>
-        <h1>Saved Posts</h1>
+        <h1 style={{marginBottom:'15px'}}>Saved Posts</h1>
         <div>
           <div>
-            <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+            <button className='main-header-sortfeed' onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
             {dropDown ? 
-            <div>
+            <div className='sort-by-profile-options'>
               <button 
                 style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
                 onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
@@ -171,24 +171,35 @@ export default function SavedPosts({feed, setFeed}) {
         </div>
       </div>
       {filteredPosts.map((el,id) => 
-        <div className="post-div" key={id}>
-          <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
-            Title: {el.title}
-          </button>
-          <p>Content: {el.content}</p>
-          <p>Author: {el.author_username}</p>
-          <p>Likes: {el.likes}</p>
-          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p>Reports: {el.reports}</p> : null}
-          <p>{formatTime(el.created_at)}</p>
-          <button onClick={() => navigateTo(`/community/${el.community}`)}>
-          <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
-          </button>
-          <button
-              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
-              onClick={() => handleLike(el)}>
-              Like
-            </button>
+        <div className="post-div" onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })} key={id}>
+        <div className="main-feed-post-header">
+          <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+          <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === el.community)[0]?.community_picture ? communities.filter((c) => c.id === el.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />
+          <div className="main-feed-post-header-info">
+            <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : '...'}</button>
+            <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}</button>
+          </div>
+          </div>
+          <div>
+          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p style={{color:'gray'}} className="main-feed-post-body-content">{el.reports} reports</p> : ''}
+          <div className="main-feed-post-header-warning">
+            {el.warning ? <button className='main-feed-post-body-warned'>!</button> : ""}
+          </div>
+          </div>
         </div>
+        <p className="main-feed-post-body-title">{el.title}</p>
+        <p className="main-feed-post-body-content">{el.content.slice(0,400)}{el.content.length > 400 ? '...' : ''}</p>
+        {el.post_picture ? <img className='main-feed-post-image' src={`${import.meta.env.VITE_API_URL}${el.post_picture}`} alt="error loading post image"/> : null}
+        <div className="main-feed-post-body-footer">
+          <button
+            className='main-feed-post-body-likes'
+            style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? '#0571d3' : 'gray'}} 
+            onClick={(e) => {e.stopPropagation() ;handleLike(el)}}>
+            {el.likes} likes
+          </button>
+          <p className="main-feed-post-body-time">{formatTime(el.created_at)}</p>
+        </div>
+      </div>
       )}
     </div>
   )

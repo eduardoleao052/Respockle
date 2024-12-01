@@ -320,13 +320,6 @@ button:hover {
     margin: 0;
 }
 
-.header-navbar-authtrue {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 0;
-}
-
 .popup-div {
     position: fixed;
     text-align: center;
@@ -374,6 +367,7 @@ button:hover {
 .main-profile-profile-header-div {
     display: flex;
     flex-direction: column;
+    margin-left: 15px;
 }
 .main-profile-profile-header p {
     display: inline;
@@ -523,4 +517,167 @@ textarea {
 
 .more-gap {
     gap: 30px;
+}
+
+.create-post-form{
+    font-size: 18px;
+    font-weight: bold;
+}
+.create-post-title-div{
+    padding-top: 7px;
+    padding-bottom: 5px;
+}
+.create-post-input-title{
+    width: 325px;
+    background-color: rgb(237, 237, 237);
+    border: 1px solid rgb(189, 189, 189);
+    padding: 10px 20px;
+    border-radius: 15px;
+    height: 15px;
+}
+.create-post-image-div{
+    padding-bottom: 5px;
+}
+.create-post-content-div{
+    padding-bottom: 5px;
+}
+.content-post-box{
+    height: 150px;
+}
+
+.create-post-community-div{
+    padding-bottom: 1%;
+}
+.create-post-button-create{
+    font-size: 15px;
+    background-color: #0571d3;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 15px;
+}
+.create-post-button-create:hover{
+    opacity: 0.93;
+}
+.post-btn-info{ 
+    font-size: 2rem;
+    color: #ffffff;
+    height: 200px;
+    width: 365px;
+    object-fit: cover;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.post-btn-info:hover{
+    filter: brightness(0.95)
+}
+#postInputField {
+    display: none;
+}
+.create-post-button-choose-community{
+    font-size: 15px;
+    text-align: center;
+    background-color: rgb(237, 237, 237);
+    padding: 6px 8px;
+    border-radius: 15px;
+    margin-left: 10px;
+}
+.profile-sort-by{
+    background-color: #a1a1a1;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    margin-top: 5px;
+
+}
+.sort-by-profile-options{
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.085); 
+}
+.sort-by-profile-options button{
+    padding: 10px 15px;
+    font-size: 1.3rem;
+    background: none;
+    border-radius: 10px;
+}
+.header-navbar-authtrue{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+.header-title-authtrue{
+    display:inline-block;   
+    margin-top: 15px;
+    color: white;
+    font-weight: 600;
+    font-size: 30px; 
+    text-align: center;
+}
+
+
+.header-profile-picture-authtrue{
+    width: 60px;
+    height: 6%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.community-feed-post-header-info{
+    align-items: center;
+    margin-top: 10px;
+}
+.community-feed-post-url{
+    font-size: 15px;
+    font-weight: bold;
+    background: none;    
+}
+.community-feed-post-url:hover{
+    color: rgb(163,163, 163);   
+}
+.community-profile-picture{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+
+}
+.community-title-picture{
+    display:flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.community-title-picture h1{
+    margin-top: 19px;
+}
+.community-leave-join {
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    background-color: gray;
+    margin-bottom: 10px;
+}
+.community-delete{
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    background-color: #9c1010;
+    margin-bottom: 10px;
+}
+.community-delete-confirm{
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    background-color: #9c1010;
+    margin-top:10px;
+}
+.community-delete-cancel{
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    background-color: #a1a1a1;
+    margin-top:10px;
 }

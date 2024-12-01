@@ -118,10 +118,8 @@ export default function Header() {
                 </div>
                 : 
                 <div className='header-navbar-authtrue'>
-                    <h1 className='header-title'>Dalilah</h1>
-                    <a href="/login" onClick={() => isLoggedIn()}>Login</a> 
-                    <br />
-                    <a href="/register"  onClick={() => isLoggedIn()}>Register</a>
+                    <img className="header-profile-picture-authtrue" src={`${import.meta.env.VITE_API_URL}assets/logo.png`}/>
+                    <h1 className='header-title-authtrue'>Dalilah</h1>                
                 </div>
             }
         </nav>

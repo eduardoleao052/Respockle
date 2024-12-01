@@ -200,21 +200,26 @@ export default function Community({setTrigger, feed, setFeed}) {
   return (
     <div className='main'>
       <div className='main-header'>
-        <img className="header-profile-picture" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === communityId)[0]?.community_picture ? communities.filter((c) => c.id === communityId)[0]?.community_picture : 'assets/default_profile_picture.png': 'assets/default_profile_picture.png'}`} alt="" />
-        <h1>{communities ? communities.filter((c) => c.id === communityId)[0]?.name : null}<span className='coooooo'>&#9830;</span></h1>
-        <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.description : null}</h4>
-        <h4>{communities ? communities.filter((c) => c.id === communityId)[0]?.members.length : null}</h4>
+        <div className='community-title-picture'>
+          <img className="community-profile-picture" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === communityId)[0]?.community_picture ? communities.filter((c) => c.id === communityId)[0]?.community_picture : 'assets/default_profile_picture.png': 'assets/default_profile_picture.png'}`} alt="" />
+          <h1>{communities ? communities.filter((c) => c.id === communityId)[0]?.name : null}</h1>
+        </div>
+        <h4 style={{marginTop:'10px', marginBottom:'10px'}}>{communities ? communities.filter((c) => c.id === communityId)[0]?.description : null}</h4>
+        <h4 style={{marginBottom:'10px'}}>{communities ? communities.filter((c) => c.id === communityId)[0]?.members.length : null} members</h4>
         {(communities?.filter((c) => c.id === communityId)[0]?.author === User?.id) ? 
-        <button onClick={() => setDeletePopUp(true)}>Delete Community</button> :
-        <button onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>}
+        <button className='community-delete' onClick={() => setDeletePopUp(true)}>Delete Community</button> :
+        <button className='community-leave-join' onClick={() => handle_membership()}>{User ? (getFields(usersInCommunity, 'id').includes(User.id) ? 'leave' : 'join') : false}</button>}
         {deletePopUp ?
           <>
             <div className='popup-div'>
-              <p>You sure you wanna delete?</p>
-              <button onClick={() => setDeletePopUp(false)}>Cancel</button>
-              <button onClick={() => deleteCommunity()}>
-                Confirm
+              <p>Do you want to delete the community?</p>
+              <div style={{display:'flex', flexDirection:'row',justifyContent:'space-around'}}>
+                <button className='community-delete-cancel' onClick={() => setDeletePopUp(false)}>Cancel</button>
+                <button className='community-delete-confirm' onClick={() => deleteCommunity()}>
+              
+                Delete
               </button>
+              </div>
             </div>
             <div className='popup-blackout'></div>
           </> :
@@ -222,9 +227,9 @@ export default function Community({setTrigger, feed, setFeed}) {
         }
         <div>
           <div>
-            <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+            <button className='main-header-sortfeed' onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
             {dropDown ? 
-            <div>
+            <div className='sort-by-profile-options'>
               <button 
                 style={{backgroundColor: feed === 'likes' ? 'blue' : 'white'}}
                 onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
@@ -239,7 +244,7 @@ export default function Community({setTrigger, feed, setFeed}) {
               <button 
                 style={{backgroundColor: feed === 'reports' ? 'blue' : 'white'}}
                 onClick={() => {getCommunityPostsByReports(); setFeed('reports')}}>
-                Controversial
+                Reports
               </button> : null}
             </div> : null}
           </div>
@@ -249,30 +254,39 @@ export default function Community({setTrigger, feed, setFeed}) {
         </div>
       </div>
       {filteredPosts.map((el,id) => 
-        <div className="post-div" key={id}>
-          <img 
-          className="main-feed-post-header-image"
-          src={`${import.meta.env.VITE_API_URL}${profiles ? 
-            profiles.filter((c) => c.user_id === el.author)[0]?.profile_picture ? 
-            profiles.filter((c) => c.user_id === el.author)[0].profile_picture : 
-            'assets/default_profile_picture.png': 
-            'assets/default_profile_picture.png'}`}/>
-          <button key={id} onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })}>
-            Title: {el.title}
-          </button>
-          <p>Content: {el.content}</p>
-          <p>Author: {el.author_username}</p>
-          <p>Likes: {el.likes}</p>
-          {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p>Reports: {el.reports}</p> : null}
-          <p>{formatTime(el.created_at)}</p>
-          <button onClick={() => window.scrollTo(0, 0)}>
-          <p>Community: {communities ? communities.filter((community) => community.id === el.community)[0].name : null}</p>
-          </button>
-          <button
-              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? 'blue' : 'white'}} 
-              onClick={() => handleLike(el)}>
-              Like
+        <div className="post-div" onClick={() => navigateTo(`/detail/${el.id}`,{ state: {from: location} })} key={id}>
+          <div className="main-feed-post-header">
+            <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+              <img 
+              className="main-feed-post-header-image"
+              src={`${import.meta.env.VITE_API_URL}${profiles ? 
+                profiles.filter((c) => c.user_id === el.author)[0]?.profile_picture ? 
+                profiles.filter((c) => c.user_id === el.author)[0].profile_picture : 
+                'assets/default_profile_picture.png': 
+                'assets/default_profile_picture.png'}`}/>
+              <div className="community-feed-post-header-info">
+                <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='community-feed-post-url'>{el.author_username}</button>
+              </div>
+            </div>
+            <div>
+              {communities?.filter((c) => c.id === el.community)[0].author === User?.id ? <p style={{color:'gray'}} className="main-feed-post-body-content">{el.reports} reports</p> : ''}
+              <div className="main-feed-post-header-warning">
+                {el.warning ? <button className='main-feed-post-body-warned'>!</button> : ""}
+              </div>
+            </div>
+          </div>
+          <p className="main-feed-post-body-title">{el.title}</p>
+          <p className="main-feed-post-body-content">{el.content.slice(0,400)}{el.content.length > 400 ? '...' : ''}</p>
+          {el.post_picture ? <img className='main-feed-post-image' src={`${import.meta.env.VITE_API_URL}${el.post_picture}`} alt="error loading post image"/> : null}
+          <div className="main-feed-post-body-footer">
+            <button
+              className='main-feed-post-body-likes'
+              style={{backgroundColor: getFields(PostsLikedByUsers, 'id').includes(el.id) ? '#0571d3' : 'gray'}} 
+              onClick={(e) => {e.stopPropagation() ;handleLike(el)}}>
+              {el.likes} likes
             </button>
+            <p className="main-feed-post-body-time">{formatTime(el.created_at)}</p>
+          </div>
         </div>
       )}
     </div>

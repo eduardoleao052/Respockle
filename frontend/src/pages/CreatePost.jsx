@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function CreatePost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [postPicture, setPostPicture] = useState('');
   const [community, setCommunity] = useState('')
   const [User, setUser] = useState(null);
@@ -71,25 +72,34 @@ export default function CreatePost() {
   return (
     <div className='main'>
       <h2>Create Post</h2>
-      <form>
-        <label htmlFor="title">Title</label>
+      <form className='create-post-form'>
+        <div className="create-post-title-div">
+          <label  htmlFor="title">Title:</label>
+          <br />
+          <input className="create-post-input-title" type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>
+        </div>
         <br />
-        <input type="text" id="title" value={title} name="title" required onChange={(e) => setTitle(e.target.value)}/>
-        <br />
-        <label htmlFor="content">Content</label>
-        <br />
-        <input type="file" accept="image/*" onChange={(e) => setPostPicture(e.target.files[0])}/>
-        <br />
-        <textarea id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
-        <br />
+        <div className="create-post-image-div">
+          <label htmlFor="postInputField"><img className="post-btn-info" src={`${postPicture ? imageUrl : `${import.meta.env.VITE_API_URL}assets/default_image_picture.jpg`}`}/></label>
+          <input type="file" id="postInputField" accept="image/*" onChange={(e) => {setPostPicture(e.target.files[0]); setImageUrl(URL.createObjectURL(e.target.files[0]))}}/>
+          <br />
+        </div>
+        <div className='create-post-content-div'>
+          <label htmlFor="content">Content:</label>
+          <br />
+          <textarea  className='content-post-box' id="content" value={content} name="content" required onChange={(e) => setContent(e.target.value)}></textarea>
+          <br />
+        </div>
+        <div className='create-post-community-div'>
         <label htmlFor="community">Choose a Community:</label>
-            <select onChange={(e) => {setCommunity(e.target.value)}} id="community" name="community">
-            <option value=""> -- select an option -- </option>
-            {communities.map((el, id) => <option key={id} value={el.id} required>{el.name}</option>)}
+            <select className="create-post-button-choose-community" onChange={(e) => {setCommunity(e.target.value)}} id="community" name="community">
+            <option  value="">  -- select an option -- </option>
+            {communities.map((el, id) => <option  key={id} value={el.id} required>{el.name}</option>)}
             </select>
         <br />
+        </div>
       </form>
-      <button onClick={createPost}>Post</button>
+      <button className="create-post-button-create" onClick={createPost}>Post</button>
     </div>
   )
 }

@@ -24,6 +24,7 @@ export default function DetailPost() {
   const [PostsSavedByUsers, setPostsSavedByUsers] = useState(null);
   const [CommentsLikedByUsers, setCommentsLikedByUsers] = useState(null);
   const [commenting, setCommenting] = useState(false);
+  const [profiles, setProfiles] = useState(null);
 
   useEffect(() => {
     getPost();
@@ -34,6 +35,7 @@ export default function DetailPost() {
     getPostsReportedByUser();
     getCommentsLikedByUser();
     getComments();
+    getProfiles();
   },[])
 
   function formatTime(time) {
@@ -85,6 +87,13 @@ export default function DetailPost() {
       console.log(data)
       setPostsSavedByUsers(data)
     }) 
+    .catch((error) => alert(error))
+  }
+  const getProfiles = () => {
+    api
+    .get("/api/posts/all_profiles/")
+    .then((res) => res.data)
+    .then((data) => {setProfiles(data)})
     .catch((error) => alert(error))
   }
 
@@ -364,9 +373,24 @@ export default function DetailPost() {
         null
         }
         <div>
-        {post.warning ? <div className="post-div">
-          <p>Content: {post.warning}</p>
-          <p>Author: {post.warn_author_username}</p>
+        {post.warning ? <div style={{background:'lightblue'}}className="post-div">
+        <div className="main-feed-post-header">
+          <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+            <img 
+                  className="main-feed-post-header-image"
+                  src={`${import.meta.env.VITE_API_URL}${profiles ? 
+                    profiles.filter((c) => c.user_id === post.warn_author)[0]?.profile_picture ? 
+                    profiles.filter((c) => c.user_id === post.warn_author)[0].profile_picture : 
+                    'assets/default_profile_picture.png': 
+                    'assets/default_profile_picture.png'}`}/>
+              <div className="main-feed-post-header-info">
+                  <button style={{paddingTop: '6px'}} className='main-feed-post-url bold' onClick={(e) => {navigateTo(`/profile/${post.warn_author}`);}}>
+                    {post.warn_author_username}
+                  </button>
+              </div>
+            </div>
+          </div>
+          <p style={{margin: '13px 0px'}} className="main-feed-post-body-content">{post.warning}</p>
         </div> : null}
         {comments.map((el,id) => 
         <div className="post-div" key={id}>

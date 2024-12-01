@@ -223,15 +223,15 @@ export default function Profile({feed, setFeed}) {
       <h2>User's Posts</h2>
       <div>
         <div>
-          <button onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+          <button className='profile-sort-by'onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
           {dropDown ? 
-          <div>
-            <button 
+          <div className='sort-by-profile-options'>
+            <button
               style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
               onClick={() => {getUserPostsByLikes(); setFeed('likes')}}>
               Most Popular
               </button>
-            <button 
+            <button
               style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
               onClick={() => {getUserPosts(); setFeed('created_at')}}>
               Recent
