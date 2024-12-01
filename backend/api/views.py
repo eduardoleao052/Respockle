@@ -76,6 +76,7 @@ def username(request, pk):
 def post_create(request):
     data=request.data.copy()
     data["author_username"] = request.user.username
+    data["author_is_health_professional"] = request.user.is_health_professional
     serializer = PostSerializer(data=data)
     if serializer.is_valid():
         serializer.save(author=request.user)
@@ -107,6 +108,7 @@ def post_create_comment(request, pk):
     user_profile = Profile.objects.get(user_id = request.user.id)
     data["author_profile_picture"] = user_profile.profile_picture
     data["author_username"] = request.user.username
+    data["author_is_health_professional"] = request.user.is_health_professional
     data["post"] = pk
     serializer = CommentSerializer(data=data)
     if serializer.is_valid():

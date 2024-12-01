@@ -251,7 +251,7 @@ export default function DetailPost() {
                 {communities ? communities.filter((community) => community.id === post.community)[0].name : null}
               </button>  
               <button className='main-feed-post-url gray' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
-                {post.author_username}
+                {post.author_username}{post.author_is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null}
               </button>
             </div>
             </div>
@@ -385,7 +385,7 @@ export default function DetailPost() {
                     'assets/default_profile_picture.png'}`}/>
               <div className="main-feed-post-header-info">
                   <button style={{paddingTop: '6px'}} className='main-feed-post-url bold' onClick={(e) => {navigateTo(`/profile/${post.warn_author}`);}}>
-                    {post.warn_author_username}
+                    {post.warn_author_username}<span className='post-header-diamond'>&#9670;</span>
                   </button>
               </div>
             </div>
@@ -399,7 +399,7 @@ export default function DetailPost() {
             <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${el.author_profile_picture ? el.author_profile_picture  : 'assets/default_profile_picture.png'}`} alt="" />          
             <div className="main-feed-post-header-info">
               <button style={{paddingTop: '6px'}} className='main-feed-post-url bold' onClick={(e) => {navigateTo(`/profile/${el.author}`);}}>
-                {el.author_username}
+                {el.author_username}{el.author_is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null}
               </button>
             </div>
             </div>

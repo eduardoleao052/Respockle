@@ -128,7 +128,7 @@ export default function Profile({feed, setFeed}) {
     api
     .get(`/api/posts/user/username/${id}/`)
     .then((res) => res.data)
-    .then((data) => {setUsername(data.username)})
+    .then((data) => {setUsername(data)})
     .catch((error) => alert(error))
   }
 
@@ -190,7 +190,7 @@ export default function Profile({feed, setFeed}) {
       <div className='main-profile-profile-header'>
         <img className='main-profile-profile-picture' src={`${import.meta.env.VITE_API_URL}${profile ? profile.profile_picture : 'assets/default_profile_picture.png'}`} alt="profile_picture" />
         <div className='main-profile-profile-header-div'>
-          <h1>{username ? username : '...'}</h1>
+          <h1>{username ? username.username : '...'}{username ? username.is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null : null}</h1>
           <p style={{color: 'gray'}}>Joined {profile ? formatTime(profile.created_at) : '...'} ago</p>
         </div>
       </div>
@@ -221,24 +221,24 @@ export default function Profile({feed, setFeed}) {
          : null}
       </div>
       <h2>User's Posts</h2>
-      <div>
-        <div>
-          <button className='profile-sort-by'onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
+      <div className='main-header-div'>
+        <div style={{position: 'relative'}}>
+          <button className='main-header-sortfeed' onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
           {dropDown ? 
-          <div className='sort-by-profile-options'>
+          <div className='main-searchbar-recomendations'>
             <button
-              style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+              style={{backgroundColor: feed === 'created_at' ? 'white' : '#0268c8', color: feed === 'created_at' ? 'black' : 'white'}}
               onClick={() => {getUserPostsByLikes(); setFeed('likes')}}>
               Most Popular
               </button>
             <button
-              style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+              style={{backgroundColor: feed === 'created_at' ? '#0268c8' : 'white', color: feed === 'created_at' ? 'white' : 'black'}}
               onClick={() => {getUserPosts(); setFeed('created_at')}}>
               Recent
             </button>
           </div> : null}
         </div>
-        <div style={{ padding: '20px' }}>
+        <div>
           <SearchBar onSearch={handleSearch} />
         </div>
       </div>
@@ -249,7 +249,7 @@ export default function Profile({feed, setFeed}) {
             <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === el.community)[0]?.community_picture ? communities.filter((c) => c.id === el.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />
             <div className="main-feed-post-header-info">
               <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : '...'}</button>
-              <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}</button>
+              <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}{el.author_is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null}</button>
             </div>
             </div>
             <div>

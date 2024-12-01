@@ -225,30 +225,30 @@ export default function Community({setTrigger, feed, setFeed}) {
           </> :
           null
         }
-        <div>
-          <div>
+        <div className='main-header-div'>
+          <div style={{position: 'relative'}}>
             <button className='main-header-sortfeed' onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
             {dropDown ? 
-            <div className='sort-by-profile-options'>
+            <div className='main-searchbar-recomendations'>
               <button 
-                style={{backgroundColor: feed === 'likes' ? 'blue' : 'white'}}
+                style={{backgroundColor: feed === 'likes' ? '#0268c8' : 'white', color: feed === 'likes' ? 'white' : 'black'}}
                 onClick={() => {getCommunityPostsByLikes(); setFeed('likes')}}>
                 Most Popular
                 </button>
               <button 
-                style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+                style={{backgroundColor: feed === 'created_at' ? '#0268c8' : 'white', color: feed === 'created_at' ? 'white' : 'black'}}
                 onClick={() => {getCommunityPosts(); setFeed('created_at')}}>
                 Recent
               </button>
               {communities?.filter((c) => c.id === communityId)[0].author === User?.id ?
               <button 
-                style={{backgroundColor: feed === 'reports' ? 'blue' : 'white'}}
+                style={{backgroundColor: feed === 'reports' ? '#0268c8' : 'white', color: feed === 'reports' ? 'white' : 'black'}}
                 onClick={() => {getCommunityPostsByReports(); setFeed('reports')}}>
                 Reports
               </button> : null}
             </div> : null}
           </div>
-          <div style={{ padding: '20px' }}>
+          <div>
             <SearchBar onSearch={handleSearch} />
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function Community({setTrigger, feed, setFeed}) {
                 'assets/default_profile_picture.png': 
                 'assets/default_profile_picture.png'}`}/>
               <div className="community-feed-post-header-info">
-                <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='community-feed-post-url'>{el.author_username}</button>
+                <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='community-feed-post-url'>{el.author_username}{el.author_is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null}</button>
               </div>
             </div>
             <div>

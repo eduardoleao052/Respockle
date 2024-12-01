@@ -21,13 +21,13 @@ class PostSerializer(serializers.ModelSerializer):
     post_picture = serializers.ImageField(required=False)
     class Meta:
         model = Post
-        fields = ["id", "title", "content", "created_at", "author", "warning", "warn_author", "warn_author_username", "author_username", "community_profile_picture", "likes", "reports", "community", "post_picture"]
+        fields = ["id", "title", "content", "created_at", "author", "warning", "warn_author", "warn_author_username", "author_username","author_is_health_professional", "community_profile_picture", "likes", "reports", "community", "post_picture"]
         extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}, "reports" : {"read_only": True}, "warn_author" : {"read_only": True}}
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ["id", "content", "created_at", "author", "author_username", "author_profile_picture", "likes", "post"]
+        fields = ["id", "content", "created_at", "author", "author_username","author_is_health_professional", "author_profile_picture", "likes", "post"]
         extra_kwargs = {"author" : {"read_only": True}, "likes" : {"read_only": True}}
 
 class CommunitySerializer(serializers.ModelSerializer):

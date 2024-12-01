@@ -148,24 +148,24 @@ export default function SavedPosts({feed, setFeed}) {
     <div className='main'>
       <div className='main-header'>
         <h1 style={{marginBottom:'15px'}}>Saved Posts</h1>
-        <div>
-          <div>
+        <div className='main-header-div'>
+          <div style={{position: 'relative'}}>
             <button className='main-header-sortfeed' onClick={() => toggleDropDown((d) => !d)}>Sort By</button>
             {dropDown ? 
-            <div className='sort-by-profile-options'>
+            <div className='main-searchbar-recomendations'>
               <button 
-                style={{backgroundColor: feed === 'created_at' ? 'white' : 'blue'}}
+                style={{backgroundColor: feed === 'created_at' ? 'white' : '#0268c8', color: feed === 'created_at' ? 'black' : 'white'}}
                 onClick={() => {getSavedPostsByLikes(); setFeed('likes')}}>
                 Most Popular
                 </button>
               <button 
-                style={{backgroundColor: feed === 'created_at' ? 'blue' : 'white'}}
+                style={{backgroundColor: feed === 'created_at' ? '#0268c8' : 'white', color: feed === 'created_at' ? 'white' : 'black'}}
                 onClick={() => {getSavedPosts(); setFeed('created_at')}}>
                 Recent
               </button>
             </div> : null}
           </div>
-          <div style={{ padding: '20px' }}>
+          <div>
             <SearchBar onSearch={handleSearch} />
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function SavedPosts({feed, setFeed}) {
           <img className="main-feed-post-header-image" src={`${import.meta.env.VITE_API_URL}${communities ? communities.filter((c) => c.id === el.community)[0]?.community_picture ? communities.filter((c) => c.id === el.community)[0]?.community_picture : 'assets/default_community_image.png': 'assets/default_community_image.png'}`} alt="" />
           <div className="main-feed-post-header-info">
             <button onClick={(e) => {e.stopPropagation(); navigateTo(`/community/${el.community}`);}} className='main-feed-post-url bold'>{communities ? communities.filter((community) => community.id === el.community)[0].name : '...'}</button>
-            <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}</button>
+            <button onClick={(e) => {e.stopPropagation(); navigateTo(`/profile/${el.author}`);}} className='main-feed-post-url'>{el.author_username}{el.author_is_health_professional ? <span className='post-header-diamond'>&#9670;</span> : null}</button>
           </div>
           </div>
           <div>
